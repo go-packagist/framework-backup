@@ -4,12 +4,12 @@ set -e
 set -x
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-#BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
-#REPOS=$@
+BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
+REPOS=$@
 
 function split()
 {
-    SHA1=`./bin/splitsh-lite --prefix=$1`
+    SHA1=`git subtree split  --prefix=$1`
     git push $2 "$SHA1:refs/heads/$CURRENT_BRANCH" -f
 }
 
@@ -20,15 +20,12 @@ function remote()
 
 git pull origin $CURRENT_BRANCH
 
-#if [[ $# -eq 0 ]]; then
-#    REPOS=$(ls $BASEPATH)
-#fi
+if [[ $# -eq 0 ]]; then
+    REPOS=$(ls $BASEPATH)
+fi
 
-remote tests2 git@github.com:go-packagist/tests2.git
-split "src/tests2" tests2
+for REPO in $REPOS ; do
+    remote $REPO git@github.com:go-packagist/$REPO.git
 
-#for REPO in $REPOS ; do
-#    remote $REPO git@github.com:go-packagist/$REPO.git
-#
-#    split "src/$REPO" $REPO
-#done
+    split "src/$REPO" $REPO
+done
