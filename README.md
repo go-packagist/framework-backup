@@ -1,2 +1,3 @@
-# framework
-Go Packagist Framework
+# Go Packagist Framework
+
+_——The idea came from [Laravel](https://github.com/laravel)_

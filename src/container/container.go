@@ -10,8 +10,12 @@ func NewContainer() *Container {
 	}
 }
 
-func (c *Container) Register(name string, provider Provider) {
+func (c *Container) Register(name string, provider Provider) Provider {
 	c.providers[name] = provider
+
+	provider.Register()
+
+	return provider
 }
 
 func (c *Container) GetProvider(name string) Provider {
