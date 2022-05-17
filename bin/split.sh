@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Usage:
+# ./bin/split.sh [name]
+#
+# Example:
+# ./bin/split.sh support
+
 set -e
 set -x
 
@@ -9,7 +15,7 @@ REPOS=$@
 
 function split()
 {
-    SHA1=`git subtree split  --prefix=$1`
+    SHA1=`git subtree split --prefix=$1`
     git push $2 "$SHA1:refs/heads/$CURRENT_BRANCH" -f
 }
 
