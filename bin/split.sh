@@ -4,8 +4,8 @@ set -e
 set -x
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
-REPOS=$@
+#BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
+#REPOS=$@
 
 function split()
 {
@@ -20,12 +20,15 @@ function remote()
 
 git pull origin $CURRENT_BRANCH
 
-if [[ $# -eq 0 ]]; then
-    REPOS=$(ls $BASEPATH)
-fi
+#if [[ $# -eq 0 ]]; then
+#    REPOS=$(ls $BASEPATH)
+#fi
 
-for REPO in $REPOS ; do
-    remote $REPO git@github.com:go-packagist/$REPO.git
+remote tests2 git@github.com:go-packagist/tests2.git
+split "src/tests2" tests2
 
-    split "src/$REPO" $REPO
-done
+#for REPO in $REPOS ; do
+#    remote $REPO git@github.com:go-packagist/$REPO.git
+#
+#    split "src/$REPO" $REPO
+#done
