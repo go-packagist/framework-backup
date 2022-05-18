@@ -64,15 +64,15 @@ func TestManager_Local(t *testing.T) {
 
 func TestManager_S3(t *testing.T) {
 	// init
-	m := NewManager(&Config{
-		Default: "s3",
-		Disk: map[string]interface{}{
-			"s3": &S3DriveConfig{
-				AccessKey: "",
-				SecretKey: "",
-				Bucket:    "",
-				Region:    "",
-			},
-		},
-	})
+	// m := NewManager(&Config{
+	// 	Default: "s3",
+	// 	Disk: map[string]interface{}{
+	// 		"s3": &S3DriveConfig{
+	// 			AccessKey: "",
+	// 			SecretKey: "",
+	// 			Bucket:    "",
+	// 			Region:    "",
+	// 		},
+	// 	},
+	// })
 }

@@ -1,14 +1,14 @@
-package container
+package foundation
 
 type TestProvider struct {
-	Container *Container
+	app *Application
 }
 
 var _ Provider = (*TestProvider)(nil)
 
-func NewTestProvider(c *Container) *TestProvider {
+func NewTestProvider(app *Application) *TestProvider {
 	return &TestProvider{
-		Container: c,
+		app: app,
 	}
 }
 
