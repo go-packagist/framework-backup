@@ -32,6 +32,19 @@ func TestParallel(t *testing.T) {
 	assert.Equal(t, []interface{}{2, 1, 3, 4}, p.Wait())
 }
 
-func TestParallel_Limit(t *testing.T) {
+func TestParallel_Function(t *testing.T) {
+	var callbacks []func() interface{}
 
+	callbacks = append(callbacks, func() interface{} {
+		return 2
+	})
+	callbacks = append(callbacks, func() interface{} {
+		return 1
+	})
+
+	assert.Equal(t, []interface{}{2, 1}, Parallel(callbacks))
+}
+
+func TestParallel_Limit(t *testing.T) {
+	// todo
 }

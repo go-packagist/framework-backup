@@ -8,6 +8,16 @@ type parallel struct {
 	limit     int
 }
 
+func Parallel(callbacks []func() interface{}) []interface{} {
+	p := NewParallel(0)
+
+	for _, callback := range callbacks {
+		p.Add(callback)
+	}
+
+	return p.Wait()
+}
+
 // NewParallel 创建一个并发执行
 //
 // 	limit 是启用协程的数量，若为0，则不限制协程数
