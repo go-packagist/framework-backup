@@ -10,11 +10,11 @@ import (
 //
 // Example:
 
-// 	With(1, func(i interface{}) interface{} {
-// 		return i.(int) + 2
-// 	}, func(i interface{}) interface{} {
-// 		return i.(int) * 100
-// 	})
+//	With(1, func(i interface{}) interface{} {
+//		return i.(int) + 2
+//	}, func(i interface{}) interface{} {
+//		return i.(int) * 100
+//	})
 //
 func With(value interface{}, fn ...func(interface{}) interface{}) interface{} {
 	for _, f := range fn {
@@ -29,7 +29,7 @@ func With(value interface{}, fn ...func(interface{}) interface{}) interface{} {
 // Example:
 //
 //	Default(nil, 1)
-// 	Default(1, 1)
+//	Default(1, 1)
 //
 func Default(value interface{}, defaultValue interface{}) interface{} {
 	if value == nil {
@@ -43,9 +43,9 @@ func Default(value interface{}, defaultValue interface{}) interface{} {
 //
 // Example:
 //
-// 	Retry(3, func() error {
+//	Retry(3, func() error {
 // 		return nil
-// 	})
+//	})
 //
 func Retry(times int, fn func() error, sleepTime ...time.Duration) error {
 	for i := 0; i < times; i++ {
