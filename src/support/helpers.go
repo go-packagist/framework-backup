@@ -1,6 +1,8 @@
 package support
 
-import "time"
+import (
+	"time"
+)
 
 // With Return the given value, optionally passed through the given callback.
 // If the `fn` is nil, the value is returned unmodified.
@@ -23,6 +25,12 @@ func With(value interface{}, fn ...func(interface{}) interface{}) interface{} {
 }
 
 // Default Return the given value, or the given default value if the given value is nil.
+//
+// Example:
+//
+//	Default(nil, 1)
+// 	Default(1, 1)
+//
 func Default(value interface{}, defaultValue interface{}) interface{} {
 	if value == nil {
 		return defaultValue
@@ -32,6 +40,13 @@ func Default(value interface{}, defaultValue interface{}) interface{} {
 }
 
 // Retry Retry an operation a given number of times
+//
+// Example:
+//
+// 	Retry(3, func() error {
+// 		return nil
+// 	})
+//
 func Retry(times int, fn func() error, sleepTime ...time.Duration) error {
 	for i := 0; i < times; i++ {
 		err := fn()
