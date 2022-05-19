@@ -5,6 +5,8 @@ import "github.com/go-packagist/container"
 type Application struct {
 	basePath string
 
+	services map[string]interface{}
+
 	*container.Container
 
 	providers map[string]Provider
@@ -16,6 +18,7 @@ func NewApplication(basePath string) *Application {
 	app := &Application{
 		basePath:  basePath,
 		providers: make(map[string]Provider),
+		services:  make(map[string]interface{}),
 	}
 
 	return app
@@ -35,6 +38,18 @@ func (app *Application) GetProvider(name string) Provider {
 
 func (app *Application) GetProviders() map[string]Provider {
 	return app.providers
+}
+
+func (app *Application) GetService(name string) interface{} {
+	service, ok := app.services[name]
+
+	if ok {
+		return service
+	}
+
+	panic("Service not found")
+
+	return nil
 }
 
 func (app *Application) Version() string {
