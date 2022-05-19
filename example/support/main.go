@@ -9,7 +9,7 @@ import (
 func main() {
 	c := coroutine.NewConcurrent(10)
 
-	for i := 1; i <= 100; i++ {
+	for i := 1; i <= 30; i++ {
 		ii := i
 		c.Create(func() {
 			time.Sleep(time.Second)
