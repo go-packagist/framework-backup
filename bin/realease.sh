@@ -52,7 +52,7 @@ git tag $VERSION
 git push origin --tags
 
 # Tag Components
-for REMOTE in filesystem tests
+for REMOTE in support
 do
     echo ""
     echo ""
