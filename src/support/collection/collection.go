@@ -1,4 +1,4 @@
-package support
+package collection
 
 import (
 	"encoding/json"
