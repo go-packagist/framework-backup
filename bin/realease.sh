@@ -2,6 +2,12 @@
 
 set -e
 
+# Usage:
+#  ./bin/release.sh v[version]
+#
+# Example:
+# ./bin/release.sh v1.0.0
+
 # Make sure the release tag is provided.
 if (( "$#" != 1 ))
 then
