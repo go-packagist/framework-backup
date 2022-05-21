@@ -248,33 +248,50 @@ func (c *strCollection) Slice(start int, end int) *strCollection {
 	return NewStrCollection(c.items[start:end])
 }
 
-func (c *strCollection) SliceFrom(start int) []string {
+// SliceFrom returns a new collection with the given range of items (including the start).
+func (c *strCollection) SliceFrom(start int) *strCollection {
 	if start < 0 {
 		start = 0
 	}
 
-	return c.items[start:]
+	return NewStrCollection(c.items[start:])
 }
 
-func (c *strCollection) SliceTo(end int) []string {
+// SliceTo returns a new collection with the given range of items (excluding the end).
+func (c *strCollection) SliceTo(end int) *strCollection {
 	if end < 0 {
 		end = len(c.items)
 	}
 
-	return c.items[:end]
+	return NewStrCollection(c.items[:end])
 }
 
-func (c *strCollection) Reverse() {
-	for i, j := 0, len(c.items)-1; i < j; i, j = i+1, j-1 {
-		c.items[i], c.items[j] = c.items[j], c.items[i]
+// Copy returns a new collection with a copy of the items.
+func (c *strCollection) Copy() *strCollection {
+	return NewStrCollection(c.items)
+}
+
+// Reverse returns a new collection with the items in reverse order.
+func (c *strCollection) Reverse() *strCollection {
+	cp := c.Copy()
+
+	for i, j := 0, len(cp.items)-1; i < j; i, j = i+1, j-1 {
+		cp.items[i], cp.items[j] = cp.items[j], cp.items[i]
 	}
+
+	return cp
 }
 
-func (c *strCollection) Shuffle() {
-	for i := range c.items {
+// Shuffle returns a new collection with the items in random order.
+func (c *strCollection) Shuffle() *strCollection {
+	cp := c.Copy()
+
+	for i := range cp.items {
 		j := rand.Intn(i + 1)
-		c.items[i], c.items[j] = c.items[j], c.items[i]
+		cp.items[i], cp.items[j] = cp.items[j], cp.items[i]
 	}
+
+	return cp
 }
 
 func (c *strCollection) Sort(fn func(string, string) bool) {

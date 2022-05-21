@@ -1,6 +1,7 @@
 package collection
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -297,4 +298,68 @@ func TestStrCollection_Slice(t *testing.T) {
 	assert.Equal(t, []string{"a"}, c.Slice(1, 0).Items())
 	assert.Equal(t, []string{}, c.Slice(1, 1).Items())
 	assert.Equal(t, []string{"b", "c", "a"}, c.Slice(1, 4).Items())
+	assert.Panics(t, func() {
+		c.Slice(1, 5).Items()
+	})
+
+	// SliceFrom
+	assert.Equal(t, []string{"b", "c", "a"}, c.SliceFrom(1).Items())
+	assert.Equal(t, []string{"c", "a"}, c.SliceFrom(2).Items())
+	assert.Equal(t, []string{"a"}, c.SliceFrom(3).Items())
+	assert.Equal(t, []string{}, c.SliceFrom(4).Items())
+	assert.Panics(t, func() {
+		c.SliceFrom(5).Items()
+	})
+
+	// SliceTo
+	assert.Equal(t, []string{"a", "b", "c"}, c.SliceTo(3).Items())
+	assert.Equal(t, []string{"a", "b"}, c.SliceTo(2).Items())
+	assert.Equal(t, []string{"a"}, c.SliceTo(1).Items())
+	assert.Equal(t, []string{}, c.SliceTo(0).Items())
+	assert.Equal(t, []string{"a", "b", "c", "a"}, c.SliceTo(-1).Items())
+	assert.Equal(t, []string{"a", "b", "c", "a"}, c.SliceTo(4).Items())
+	assert.Panics(t, func() {
+		c.SliceTo(5).Items()
+	})
+
+}
+
+func TestStrCollection_Copy(t *testing.T) {
+	c := NewStrCollection([]string{
+		"a", "b", "c", "a",
+	})
+
+	cp := c.Copy()
+	assert.Equal(t, []string{"a", "b", "c", "a"}, cp.Items())
+	assert.False(t, cp == c)
+}
+
+func TestStrCollection_Reverse(t *testing.T) {
+	// todo fix this test, it's have a bug
+
+	c := NewStrCollection([]string{
+		"a", "b", "c", "a",
+	})
+
+	c.Reverse()
+	assert.Equal(t, []string{"a", "c", "b", "a"}, c.Items())
+}
+
+func TestStrCollection_Shuffle(t *testing.T) {
+	// todo fix this test, it's have a bug
+	c := NewStrCollection([]string{
+		"a", "b", "c",
+	})
+
+	c2 := NewStrCollection(c.Items())
+
+	c3 := c.Shuffle()
+	// c.Reverse()
+
+	fmt.Println(c.Items())
+	fmt.Println(c2.Items())
+	fmt.Println(c3.Items())
+
+	// c.Shuffle()
+	// assert.True(t)
 }
