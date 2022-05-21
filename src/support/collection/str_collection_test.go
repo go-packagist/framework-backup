@@ -201,3 +201,100 @@ func TestStrCollection_Reduce(t *testing.T) {
 	assert.Equal(t, "abc", r)
 	assert.Equal(t, "abc", r.(string))
 }
+
+func TestStrCollection_ReduceRight(t *testing.T) {
+	c := NewStrCollection([]string{
+		"a", "b", "c",
+	})
+
+	// ReduceRight
+	r := c.ReduceRight(func(i int, v string, r interface{}) interface{} {
+		return r.(string) + v
+	}, "")
+	assert.Equal(t, "cba", r)
+	assert.Equal(t, "cba", r.(string))
+}
+
+func TestStrCollection_Every(t *testing.T) {
+	c := NewStrCollection([]string{
+		"aa", "bb", "cc",
+	})
+
+	// Every Use Value
+	assert.True(t, c.Every(func(i int, v string) bool {
+		return v[0] == v[1]
+	}))
+	assert.False(t, c.Every(func(i int, v string) bool {
+		return v == "aa" || v == "bb"
+	}))
+
+	// Every Use Index
+	assert.True(t, c.Every(func(i int, v string) bool {
+		return i <= 2
+	}))
+	assert.False(t, c.Every(func(i int, v string) bool {
+		return i <= 1
+	}))
+}
+
+func TestStrCollection_Some(t *testing.T) {
+	c := NewStrCollection([]string{
+		"aa", "b", "c",
+	})
+
+	// Some Use Value
+	assert.True(t, c.Some(func(i int, v string) bool {
+		return len(v) == 2 && v[0] == v[1]
+	}))
+	assert.False(t, c.Some(func(i int, v string) bool {
+		return len(v) == 2 && v[0] != v[1]
+	}))
+
+	// Some Use Index
+	assert.True(t, c.Some(func(i int, v string) bool {
+		return i <= 1
+	}))
+	assert.False(t, c.Some(func(i int, v string) bool {
+		return i > 2
+	}))
+}
+
+func TestStrCollection_IndexOf(t *testing.T) {
+	c := NewStrCollection([]string{
+		"a", "b", "c", "a",
+	})
+
+	// IndexOf
+	assert.Equal(t, 0, c.IndexOf("a"))
+	assert.Equal(t, 1, c.IndexOf("b"))
+	assert.Equal(t, 2, c.IndexOf("c"))
+	assert.Equal(t, -1, c.IndexOf("d"))
+}
+
+func TestStrCollection_LastIndexOf(t *testing.T) {
+	c := NewStrCollection([]string{
+		"a", "b", "c", "a",
+	})
+
+	// LastIndexOf
+	assert.Equal(t, 3, c.LastIndexOf("a"))
+	assert.Equal(t, 1, c.LastIndexOf("b"))
+	assert.Equal(t, 2, c.LastIndexOf("c"))
+	assert.Equal(t, -1, c.LastIndexOf("d"))
+}
+
+func TestStrCollection_Slice(t *testing.T) {
+	c := NewStrCollection([]string{
+		"a", "b", "c", "a",
+	})
+
+	// Slice
+	assert.Equal(t, []string{"a", "b", "c", "a"}, c.Slice(0, 4).Items())
+	assert.Equal(t, []string{"a", "b", "c"}, c.Slice(0, 3).Items())
+	assert.Equal(t, []string{"a", "b"}, c.Slice(0, 2).Items())
+	assert.Equal(t, []string{"a"}, c.Slice(0, 1).Items())
+	assert.Equal(t, []string{}, c.Slice(0, 0).Items())
+	assert.Equal(t, []string{"a"}, c.Slice(1, 0).Items())
+	assert.Equal(t, []string{}, c.Slice(1, 1).Items())
+	assert.Equal(t, []string{"b", "c", "a"}, c.Slice(1, 4).Items())
+}

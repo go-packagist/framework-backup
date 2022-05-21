@@ -188,9 +188,10 @@ func (c *strCollection) ReduceRight(fn func(int, string, interface{}) interface{
 	return result
 }
 
-func (c *strCollection) Every(fn func(string) bool) bool {
-	for _, v := range c.items {
-		if !fn(v) {
+// Every returns true if all items in the collection return true for the given predicate.
+func (c *strCollection) Every(fn func(int, string) bool) bool {
+	for i, v := range c.items {
+		if !fn(i, v) {
 			return false
 		}
 	}
@@ -198,9 +199,10 @@ func (c *strCollection) Every(fn func(string) bool) bool {
 	return true
 }
 
-func (c *strCollection) Some(fn func(string) bool) bool {
-	for _, v := range c.items {
-		if fn(v) {
+// Some returns true if any item in the collection returns true for the given predicate.
+func (c *strCollection) Some(fn func(int, string) bool) bool {
+	for i, v := range c.items {
+		if fn(i, v) {
 			return true
 		}
 	}
@@ -208,15 +210,18 @@ func (c *strCollection) Some(fn func(string) bool) bool {
 	return false
 }
 
+// IndexOf returns the index of the first item that matches the given value.
 func (c *strCollection) IndexOf(item string) int {
 	for i, v := range c.items {
 		if v == item {
 			return i
 		}
 	}
+
 	return -1
 }
 
+// LastIndexOf returns the index of the last item that matches the given value.
 func (c *strCollection) LastIndexOf(item string) int {
 	for i := len(c.items) - 1; i >= 0; i-- {
 		if c.items[i] == item {
@@ -226,7 +231,8 @@ func (c *strCollection) LastIndexOf(item string) int {
 	return -1
 }
 
-func (c *strCollection) Slice(start int, end int) []string {
+// Slice returns a new collection with the given range of items.
+func (c *strCollection) Slice(start int, end int) *strCollection {
 	if start < 0 {
 		start = 0
 	}
@@ -239,7 +245,7 @@ func (c *strCollection) Slice(start int, end int) []string {
 		start, end = end, start
 	}
 
-	return c.items[start:end]
+	return NewStrCollection(c.items[start:end])
 }
 
 func (c *strCollection) SliceFrom(start int) []string {
