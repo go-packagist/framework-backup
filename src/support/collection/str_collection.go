@@ -268,7 +268,11 @@ func (c *strCollection) SliceTo(end int) *strCollection {
 
 // Copy returns a new collection with a copy of the items.
 func (c *strCollection) Copy() *strCollection {
-	return NewStrCollection(c.items)
+	cp := make([]string, len(c.items))
+
+	copy(cp, c.items)
+
+	return NewStrCollection(cp)
 }
 
 // Reverse returns a new collection with the items in reverse order.
@@ -294,11 +298,37 @@ func (c *strCollection) Shuffle() *strCollection {
 	return cp
 }
 
-func (c *strCollection) Sort(fn func(string, string) bool) {
-	sort.Slice(c.items, func(i, j int) bool {
-		return fn(c.items[i], c.items[j])
-	})
+// Sort returns a new collection with the items sorted.
+func (c *strCollection) Sort(fn ...func(string, string) bool) {
+	if len(fn) == 0 {
+		sort.Strings(c.items)
+	} else {
+		sort.Slice(c.items, func(i, j int) bool {
+			return fn[0](c.items[i], c.items[j])
+		})
+	}
 }
+
+// func (c *strCollection) Sort() *strCollection {
+// 	sort.Strings(c.items)
+//
+// 	return c
+// }
+// func (c *strCollection) Sort(fn ...func(string, string) bool) {
+// 	if len(fn) == 0 {
+// 		fn = []func(string, string) bool{
+// 			func(a string, b string) bool {
+// 				return a < b
+// 			},
+// 		}
+// 	}
+//
+// 	for _, f := range fn {
+// 		sort.Slice(c.items, func(i, j int) bool {
+//
+// 		})
+// 	}
+// }
 
 func (c *strCollection) SortBy(fn func(string) string) {
 	sort.Slice(c.items, func(i, j int) bool {

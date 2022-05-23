@@ -329,20 +329,31 @@ func TestStrCollection_Copy(t *testing.T) {
 		"a", "b", "c", "a",
 	})
 
+	// Copy
 	cp := c.Copy()
 	assert.Equal(t, []string{"a", "b", "c", "a"}, cp.Items())
 	assert.False(t, cp == c)
+	assert.NotSame(t, cp, c)
+
+	// Modify
+	c.Add("d")
+	assert.Equal(t, []string{"a", "b", "c", "a", "d"}, c.Items())
+	assert.Equal(t, []string{"a", "b", "c", "a"}, cp.Items())
+
+	// Rmove
+	cp.Remove("a")
+	assert.Equal(t, []string{"a", "b", "c", "a", "d"}, c.Items())
+	assert.Equal(t, []string{"b", "c", "a"}, cp.Items())
 }
 
 func TestStrCollection_Reverse(t *testing.T) {
-	// todo fix this test, it's have a bug
-
 	c := NewStrCollection([]string{
 		"a", "b", "c", "a",
 	})
 
-	c.Reverse()
-	assert.Equal(t, []string{"a", "c", "b", "a"}, c.Items())
+	cp := c.Reverse()
+	assert.Equal(t, []string{"a", "b", "c", "a"}, c.Items())
+	assert.Equal(t, []string{"a", "c", "b", "a"}, cp.Items())
 }
 
 func TestStrCollection_Shuffle(t *testing.T) {
@@ -362,4 +373,16 @@ func TestStrCollection_Shuffle(t *testing.T) {
 
 	// c.Shuffle()
 	// assert.True(t)
+}
+
+func TestStrCollection_Sort(t *testing.T) {
+	c := NewStrCollection([]string{
+		"a", "b", "c", "a",
+	})
+	c2 := c
+
+	c.Sort()
+
+	assert.Equal(t, []string{"a", "a", "b", "c"}, c.Items())
+	fmt.Println(c2)
 }
