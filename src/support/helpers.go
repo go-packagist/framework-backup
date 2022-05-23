@@ -9,7 +9,7 @@ import (
 // If the `fn` is not nil, the value is passed through the callback, and the result is returned.
 //
 // Example:
-
+//
 //	With(1, func(i interface{}) interface{} {
 //		return i.(int) + 2
 //	}, func(i interface{}) interface{} {
