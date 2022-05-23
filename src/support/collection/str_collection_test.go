@@ -3,6 +3,7 @@ package collection
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"reflect"
 	"testing"
 )
 
@@ -357,22 +358,22 @@ func TestStrCollection_Reverse(t *testing.T) {
 }
 
 func TestStrCollection_Shuffle(t *testing.T) {
-	// todo fix this test, it's have a bug
 	c := NewStrCollection([]string{
 		"a", "b", "c",
 	})
 
-	c2 := NewStrCollection(c.Items())
+	var flag bool
 
-	c3 := c.Shuffle()
-	// c.Reverse()
+	for i := 0; i <= 10; i++ {
+		cs := c.Shuffle()
 
-	fmt.Println(c.Items())
-	fmt.Println(c2.Items())
-	fmt.Println(c3.Items())
+		if !reflect.DeepEqual(c, cs) {
+			flag = true
+			break
+		}
+	}
 
-	// c.Shuffle()
-	// assert.True(t)
+	assert.True(t, flag)
 }
 
 func TestStrCollection_Sort(t *testing.T) {

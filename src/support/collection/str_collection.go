@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"sort"
+	"time"
 )
 
 // strCollection is a collection of strings.
@@ -291,7 +292,9 @@ func (c *strCollection) Shuffle() *strCollection {
 	cp := c.Copy()
 
 	for i := range cp.items {
+		rand.Seed(time.Now().Unix())
 		j := rand.Intn(i + 1)
+
 		cp.items[i], cp.items[j] = cp.items[j], cp.items[i]
 	}
 
