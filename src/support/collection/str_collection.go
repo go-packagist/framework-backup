@@ -302,6 +302,17 @@ func (c *strCollection) Shuffle() *strCollection {
 }
 
 // Sort returns a new collection with the items sorted.
+//	c := collection.NewStrCollection([]string{
+//		"a", "b", "c", "a",
+//	})
+//
+//	// example1:
+//	c.Sort() // []string{"a", "a", "b", "c"}
+//
+//	// example2:
+//	c2.Sort(func(a, b string) bool {
+//		return a > b
+//	}) // []string{"c", "b", "a", "a"}
 func (c *strCollection) Sort(fn ...func(string, string) bool) {
 	if len(fn) == 0 {
 		sort.Strings(c.items)
@@ -312,73 +323,46 @@ func (c *strCollection) Sort(fn ...func(string, string) bool) {
 	}
 }
 
-// func (c *strCollection) Sort() *strCollection {
-// 	sort.Strings(c.items)
-//
-// 	return c
-// }
-// func (c *strCollection) Sort(fn ...func(string, string) bool) {
-// 	if len(fn) == 0 {
-// 		fn = []func(string, string) bool{
-// 			func(a string, b string) bool {
-// 				return a < b
-// 			},
-// 		}
-// 	}
-//
-// 	for _, f := range fn {
-// 		sort.Slice(c.items, func(i, j int) bool {
-//
-// 		})
-// 	}
-// }
-
+// SortBy returns a new collection with the items sorted by the given key.
 func (c *strCollection) SortBy(fn func(string) string) {
 	sort.Slice(c.items, func(i, j int) bool {
 		return fn(c.items[i]) < fn(c.items[j])
 	})
 }
 
+// SortByDesc returns a new collection with the items sorted by the given key in descending order.
 func (c *strCollection) SortByDesc(fn func(string) string) {
 	sort.Slice(c.items, func(i, j int) bool {
 		return fn(c.items[i]) > fn(c.items[j])
 	})
 }
 
-func (c *strCollection) SortByDescFunc(fn func(string, string) bool) {
-	sort.Slice(c.items, func(i, j int) bool {
-		return fn(c.items[i], c.items[j])
-	})
-}
-
-func (c *strCollection) SortByFunc(fn func(string, string) bool) {
-	sort.Slice(c.items, func(i, j int) bool {
-		return fn(c.items[i], c.items[j])
-	})
-}
-
-func (c *strCollection) Unique() []string {
-	var unique []string
+// Unique returns a new collection with the duplicate items removed.
+func (c *strCollection) Unique() *strCollection {
+	unique := NewStrCollection([]string{})
 
 	for _, v := range c.items {
-		if !c.Contains(v) {
-			unique = append(unique, v)
+		if !unique.Contains(v) {
+			unique.Add(v)
 		}
 	}
 
 	return unique
 }
 
-func (c *strCollection) Json() string {
+// MustJson returns the json representation of the collection.
+func (c *strCollection) MustJson() string {
 	result, _ := json.Marshal(c.items)
 
 	return string(result)
 }
 
+// String returns the json representation of the collection.
 func (c *strCollection) String() string {
 	return fmt.Sprintf("%v", c.items)
 }
 
+// First returns the first item in the collection.
 func (c *strCollection) First() string {
 	if len(c.items) > 0 {
 		return c.items[0]
@@ -387,6 +371,7 @@ func (c *strCollection) First() string {
 	return ""
 }
 
+// Last returns the last item in the collection.
 func (c *strCollection) Last() string {
 	if len(c.items) > 0 {
 		return c.items[len(c.items)-1]

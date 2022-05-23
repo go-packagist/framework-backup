@@ -1,7 +1,6 @@
 package collection
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
@@ -380,10 +379,67 @@ func TestStrCollection_Sort(t *testing.T) {
 	c := NewStrCollection([]string{
 		"a", "b", "c", "a",
 	})
-	c2 := c
+	c2 := c.Copy()
 
+	// Sort
 	c.Sort()
-
 	assert.Equal(t, []string{"a", "a", "b", "c"}, c.Items())
-	fmt.Println(c2)
+
+	// Sort
+	c2.Sort(func(a, b string) bool {
+		return a > b
+	})
+	assert.Equal(t, []string{"c", "b", "a", "a"}, c2.Items())
+}
+
+func TestStrCollection_SortByAndSortByDesc(t *testing.T) {
+	c := NewStrCollection([]string{
+		"a", "b", "c", "a",
+	})
+
+	// SortBy
+	c.SortBy(func(s string) string {
+		return "z" + s
+	})
+	assert.Equal(t, []string{"a", "a", "b", "c"}, c.Items())
+
+	// SortByDesc
+	c.SortByDesc(func(s string) string {
+		return "z" + s
+	})
+	assert.Equal(t, []string{"c", "b", "a", "a"}, c.Items())
+}
+
+func TestStrCollection_Unique(t *testing.T) {
+	c := NewStrCollection([]string{
+		"a", "b", "c", "a",
+	})
+
+	cu := c.Unique()
+	assert.Equal(t, []string{"a", "b", "c"}, cu.Items())
+}
+
+func TestStrCollection_MustJson(t *testing.T) {
+	c := NewStrCollection([]string{
+		"a", "b", "c", "a",
+	})
+
+	assert.Equal(t, `["a","b","c","a"]`, c.MustJson())
+}
+
+func TestStrCollection_String(t *testing.T) {
+	c := NewStrCollection([]string{
+		"a", "b", "c", "a",
+	})
+
+	assert.Equal(t, "[a b c a]", c.String())
+}
+
+func TestStrCOllection_FirstAndLast(t *testing.T) {
+	c := NewStrCollection([]string{
+		"a", "b", "c", "a",
+	})
+
+	assert.Equal(t, "a", c.First())
+	assert.Equal(t, "a", c.Last())
 }
