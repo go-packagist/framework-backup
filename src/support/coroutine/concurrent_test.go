@@ -1,6 +1,7 @@
 package coroutine
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -25,11 +26,11 @@ func TestConcurrent(t *testing.T) {
 		assert.Equal(t, 0, total)
 		assert.True(t, c.IsFull())
 
-		time.Sleep(2 * time.Second)
+		time.Sleep(1500 * time.Millisecond)
 		assert.Equal(t, 5, c.Length())
 		assert.Equal(t, 10, total)
 
-		// fmt.Println(c.Length(), total, c.IsFull(), c.IsEmpty())
+		fmt.Println(c.Length(), total, c.IsFull(), c.IsEmpty())
 	}()
 
 	for i := 0; i < 15; i++ {
