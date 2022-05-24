@@ -1,6 +1,7 @@
 package foundation
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,7 +12,7 @@ func TestApplication(t *testing.T) {
 func TestApplication_Version(t *testing.T) {
 	app := NewApplication("./")
 
-	assert.Equal(t, "0.0.1", app.Version())
+	assert.Equal(t, VERSION, app.Version())
 }
 
 func TestApplication_Register(t *testing.T) {
@@ -32,4 +33,10 @@ func TestApplication_Register(t *testing.T) {
 
 	testService.WriteContent("234567")
 	assert.Equal(t, "234567", testService.ReadContent())
+
+	app.GetService("test").(*TestService).WriteContent("123123")
+	fmt.Println(app.GetService("test").(*TestService).ReadContent())
+	fmt.Println(testService.ReadContent())
+
+	fmt.Println(app)
 }

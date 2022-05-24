@@ -6,14 +6,16 @@ type TestProvider struct {
 
 var _ Provider = (*TestProvider)(nil)
 
-func NewTestProvider(app *Application) *TestProvider {
+func NewTestProvider(app *Application) Provider {
 	return &TestProvider{
 		app: app,
 	}
 }
 
 func (p *TestProvider) Register() {
-	p.app.services["test"] = NewTestService(p.app)
+	p.app.Singleton("test", func(app *Application) interface{} {
+		return NewTestService(app)
+	})
 }
 
 type TestService struct {
