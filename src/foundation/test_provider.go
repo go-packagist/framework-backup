@@ -16,8 +16,13 @@ func (p *TestProvider) Register() {
 	p.app.Singleton("test", func(app *Application) interface{} {
 		return NewTestService(app)
 	})
+
+	p.app.Bind("test2", func(app *Application) interface{} {
+		return NewTestService(app)
+	}, false)
 }
 
+// TestService is a test service
 type TestService struct {
 	app     *Application
 	content string
