@@ -1,6 +1,7 @@
 package main
 
 import (
+	"example/foundation/facades"
 	"example/foundation/providers"
 	"fmt"
 	"github.com/go-packagist/foundation"
@@ -16,5 +17,5 @@ func main() {
 	fmt.Println("put:" + foundation.App().Make("memory").(*providers.Memory).Get("a"))
 
 	time.Sleep(time.Second * 3)
-	fmt.Println("expire:" + foundation.App().Make("memory").(*providers.Memory).Get("a"))
+	fmt.Println("expire:" + facades.Memory().Get("a"))
 }

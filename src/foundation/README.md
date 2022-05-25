@@ -7,8 +7,6 @@
 
 _——The idea came from [Laravel](https://github.com/laravel)_
 
-> 未完结版
-
 ## Installation
 
 ```bash
@@ -98,12 +96,28 @@ go get github.com/go-packagist/foundation
     }
     ```
   
+- `example/foundation/facades`
+
+  ```go
+  package facades
+  
+  import (
+      "example/foundation/providers"
+      "github.com/go-packagist/foundation"
+  )
+  
+  func Memory() *providers.Memory {
+      return foundation.App().Make("memory").(*providers.Memory)
+  }
+  ```
+  
 - `main.go`
 
     ```go
     package main
     
     import (
+        "example/foundation/facades"
         "example/foundation/providers"
         "fmt"
         "github.com/go-packagist/foundation"
@@ -119,6 +133,6 @@ go get github.com/go-packagist/foundation
         fmt.Println("put:" + foundation.App().Make("memory").(*providers.Memory).Get("a"))
     
         time.Sleep(time.Second * 3)
-        fmt.Println("expire:" + foundation.App().Make("memory").(*providers.Memory).Get("a"))
+        fmt.Println("expire:" + facades.Memory().Get("a")) // using facades
     }
     ```
