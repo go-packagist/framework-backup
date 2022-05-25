@@ -78,12 +78,12 @@ func (app *Application) GetProviders() []Provider {
 	return app.providers
 }
 
-// ------以下未完结版------
-
+// Singleton Register a shared binding in the container.
 func (app *Application) Singleton(abstract string, concrete ConcreteFunc) {
 	app.Bind(abstract, concrete, true)
 }
 
+// Bind Register a binding with the container.
 func (app *Application) Bind(abstract string, concrete ConcreteFunc, shared bool) {
 	app.bindings[abstract] = binding{
 		abstract: abstract,
@@ -92,10 +92,12 @@ func (app *Application) Bind(abstract string, concrete ConcreteFunc, shared bool
 	}
 }
 
+// Make Resolve the given type from the container.
 func (app *Application) Make(abstract string) interface{} {
 	return app.Resolve(abstract)
 }
 
+// Resolve the given type from the container.
 func (app *Application) Resolve(abstract string) interface{} {
 	// instance
 	instance, ok := app.instances[abstract]
@@ -119,6 +121,7 @@ func (app *Application) Resolve(abstract string) interface{} {
 	return concrete
 }
 
+// isShared Determine if a given type is shared.
 func (app *Application) isShared(abstract string) bool {
 	return app.bindings[abstract].shared
 }
