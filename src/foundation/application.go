@@ -123,22 +123,6 @@ func (app *Application) isShared(abstract string) bool {
 	return app.bindings[abstract].shared
 }
 
-// Singleton registers a service as a singleton.
-// func (app *Application) Singleton(name string, service ServiceFunc) {
-// 	app.services[name] = service
-// }
-//
-// // GetService returns a registered service.
-// func (app *Application) GetService(name string) interface{} {
-// 	service, ok := app.services[name]
-//
-// 	if ok {
-// 		return service(app)
-// 	}
-//
-// 	panic("Service not found")
-// }
-
 // Version returns the current version of the application.
 func (app *Application) Version() string {
 	return VERSION
