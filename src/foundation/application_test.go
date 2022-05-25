@@ -69,3 +69,21 @@ func TestApplication_Bind(t *testing.T) {
 	assert.Equal(t, "aaa", testService3.ReadContent())
 	assert.Equal(t, "", app.Make("test2").(*TestService).ReadContent())
 }
+
+func TestApplication_Instance(t *testing.T) {
+	app := NewApplication("./")
+
+	app.Register(NewTestProvider(app))
+
+	// GetInstance
+	GetInstance().Make("test").(*TestService).WriteContent("aaa")
+	assert.Equal(t, "aaa", GetInstance().Make("test").(*TestService).ReadContent())
+
+	// App
+	App().Make("test").(*TestService).WriteContent("bbb")
+	assert.Equal(t, "bbb", App().Make("test").(*TestService).ReadContent())
+
+	// Instance
+	Instance().Make("test").(*TestService).WriteContent("ccc")
+	assert.Equal(t, "ccc", Instance().Make("test").(*TestService).ReadContent())
+}

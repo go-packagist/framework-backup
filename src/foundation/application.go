@@ -1,7 +1,6 @@
 package foundation
 
 import (
-	"github.com/go-packagist/container"
 	"reflect"
 )
 
@@ -20,14 +19,12 @@ type Application struct {
 
 	bindings  map[string]binding
 	instances map[string]interface{}
-
-	// services map[string]ServiceFunc
-
-	*container.Container
 }
 
 // VERSION is the current version of the application.
 const VERSION = "0.0.1"
+
+var instance *Application
 
 // NewApplication creates a new application instance
 func NewApplication(basePath string) *Application {
@@ -39,7 +36,26 @@ func NewApplication(basePath string) *Application {
 		// services:  make(map[string]ServiceFunc),
 	}
 
+	// 设置常驻变量
+	SetInstance(app)
+
 	return app
+}
+
+func SetInstance(app *Application) {
+	instance = app
+}
+
+func GetInstance() *Application {
+	return instance
+}
+
+func Instance() *Application {
+	return GetInstance()
+}
+
+func App() *Application {
+	return GetInstance()
 }
 
 // Register registers a provider with the application.
