@@ -33,7 +33,6 @@ func NewApplication(basePath string) *Application {
 		providers: []Provider{},
 		bindings:  make(map[string]binding),
 		instances: make(map[string]interface{}),
-		// services:  make(map[string]ServiceFunc),
 	}
 
 	// 设置常驻变量
