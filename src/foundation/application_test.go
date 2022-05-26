@@ -70,7 +70,7 @@ func TestApplication_Bind(t *testing.T) {
 	assert.Equal(t, "", app.Make("test2").(*TestService).ReadContent())
 }
 
-func TestApplication_Instance(t *testing.T) {
+func TestApplication_AppInstance(t *testing.T) {
 	app := NewApplication("./")
 
 	app.Register(NewTestProvider(app))
@@ -86,4 +86,32 @@ func TestApplication_Instance(t *testing.T) {
 	// Instance
 	Instance().Make("test").(*TestService).WriteContent("ccc")
 	assert.Equal(t, "ccc", Instance().Make("test").(*TestService).ReadContent())
+}
+
+func TestApplication_Instance(t *testing.T) {
+	app := NewApplication("./")
+
+	// map[string]string
+	app.Instance("config", map[string]string{
+		"key":  "value",
+		"key1": "value1",
+	})
+	assert.Equal(t, "value", app.Make("config").(map[string]string)["key"])
+
+	// string
+	app.Instance("path.base", "dirname")
+	assert.Equal(t, "dirname", app.Make("path.base").(string))
+
+	// struct
+	type TestStruct struct {
+		Name string
+	}
+	app.Instance("test", &TestStruct{"test"})
+	assert.Equal(t, "test", app.Make("test").(*TestStruct).Name)
+
+	// func
+	app.Instance("func", func() string {
+		return "func"
+	})
+	assert.Equal(t, "func", app.Make("func").(func() string)())
 }

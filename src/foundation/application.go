@@ -2,6 +2,7 @@ package foundation
 
 import (
 	"reflect"
+	"strings"
 )
 
 type ConcreteFunc func(*Application) interface{}
@@ -29,11 +30,13 @@ var instance *Application
 // NewApplication creates a new application instance
 func NewApplication(basePath string) *Application {
 	app := &Application{
-		basePath:  basePath,
 		providers: []Provider{},
 		bindings:  make(map[string]binding),
 		instances: make(map[string]interface{}),
 	}
+
+	// 设置basePath
+	app.setBasePath(basePath)
 
 	// 设置常驻变量
 	SetInstance(app)
@@ -107,6 +110,10 @@ func (app *Application) Bind(abstract string, concrete ConcreteFunc, shared bool
 	}
 }
 
+func (app *Application) Instance(abstract string, concrete interface{}) {
+	app.instances[abstract] = concrete
+}
+
 // Make Resolve the given type from the container.
 func (app *Application) Make(abstract string) interface{} {
 	return app.Resolve(abstract)
@@ -130,7 +137,7 @@ func (app *Application) Resolve(abstract string) interface{} {
 	concrete := binding.concrete(app)
 
 	if app.isShared(abstract) {
-		app.instances[abstract] = concrete
+		app.Instance(abstract, concrete)
 	}
 
 	return concrete
@@ -139,6 +146,41 @@ func (app *Application) Resolve(abstract string) interface{} {
 // isShared Determine if a given type is shared.
 func (app *Application) isShared(abstract string) bool {
 	return app.bindings[abstract].shared
+}
+
+// SetBasePath sets the base path for the application.
+func (app *Application) setBasePath(basePath string) {
+	app.basePath = strings.TrimRight(basePath, "/")
+
+	app.bindPathInApplication()
+}
+
+// bindPathInApplication bind path in application
+func (app *Application) bindPathInApplication() {
+	app.Instance("path", app.getPath())
+	app.Instance("path.base", app.getBasePath())
+	app.Instance("path.config", app.getConfigPath())
+	app.Instance("path.bootstrap", app.getBootstrapPath())
+}
+
+// getPath returns the app path to the base of the application.
+func (app *Application) getPath() string {
+	return app.basePath + "/" + "app"
+}
+
+// getBasePath returns the base path of the application.
+func (app *Application) getBasePath() string {
+	return app.basePath
+}
+
+// getConfigPath returns the path to the config folder.
+func (app *Application) getConfigPath() string {
+	return app.basePath + "/" + "config"
+}
+
+// getBootstrapPath returns the path to the bootstrap folder.
+func (app *Application) getBootstrapPath() string {
+	return app.basePath + "/" + "bootstrap"
 }
 
 // Version returns the current version of the application.
