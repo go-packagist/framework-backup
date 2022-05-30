@@ -37,3 +37,26 @@ func TestConfig_Facades(t *testing.T) {
 
 	assert.Equal(t, "test", Facade().Get("test"))
 }
+
+func TestConfig_Add(t *testing.T) {
+	app := foundation.NewApplication("./")
+
+	app.Register(NewConfigProvider(app))
+
+	Facade().Add("app", map[string]interface{}{
+		"name":     "test",
+		"debug":    true,
+		"timezone": "Beijing",
+	})
+
+	assert.Equal(t, "test", Facade().Get("app.name"))
+	assert.Equal(t, true, Facade().Get("app.debug"))
+	assert.Equal(t, "Beijing", Facade().Get("app.timezone"))
+	assert.Equal(t, map[string]interface{}{
+		"app": map[string]interface{}{
+			"name":     "test",
+			"debug":    true,
+			"timezone": "Beijing",
+		},
+	}, Facade().GetAll())
+}

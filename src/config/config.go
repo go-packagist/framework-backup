@@ -28,12 +28,6 @@ func (c *Config) init() {
 	viper.AddConfigPath(".")
 	viper.SetEnvPrefix(c.Options.GetPrefix())
 	viper.AutomaticEnv()
-
-	// read config
-	// err := viper.ReadInConfig()
-	// if err != nil {
-	// 	panic(fmt.Errorf("Fatal error config file: %w \n", err))
-	// }
 }
 
 // GetOptions returns the options.
@@ -50,22 +44,32 @@ func (c *Config) GetEnvPath() string {
 	return c.Options.GetEnvPath()
 }
 
+// Add adds the key and value to the config.
 func (c *Config) Add(key string, value interface{}) {
 	viper.Set(key, value)
 }
 
+// Set sets the options.
+func (c *Config) Set(key string, value interface{}) {
+	viper.Set(key, value)
+}
+
+// Get returns the value by the key.
 func (c *Config) Get(key string) interface{} {
 	return viper.Get(key)
 }
 
+// GetString returns the string by the key.
 func (c *Config) GetString(key string) string {
 	return viper.GetString(key)
 }
 
+// GetBool returns the bool by the key.
 func (c *Config) GetBool(key string) bool {
 	return viper.GetBool(key)
 }
 
+// GetAll returns the all config.
 func (c *Config) GetAll() map[string]interface{} {
 	return viper.AllSettings()
 }
