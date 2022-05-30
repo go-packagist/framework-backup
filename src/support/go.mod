@@ -7,3 +7,7 @@ require (
 	github.com/golang-module/carbon/v2 v2.1.6
 	github.com/stretchr/testify v1.7.1
 )
+
+replace (
+	github.com/go-packagist/config => ../config
+)
