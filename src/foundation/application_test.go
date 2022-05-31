@@ -31,27 +31,27 @@ func TestApplication_Bind(t *testing.T) {
 	app.Register(NewTestProvider(app))
 
 	// 测试容器的单例（Singleton）效果
-	testService := app.Make("test").(*TestService)
+	testService := app.MustMake("test").(*TestService)
 	testService.WriteContent("aaa")
 	assert.Equal(t, "aaa", testService.ReadContent())
 
-	testService2 := app.Make("test").(*TestService)
+	testService2 := app.MustMake("test").(*TestService)
 	testService2.WriteContent("bbb")
 
 	assert.Equal(t, "bbb", testService2.ReadContent())
 	assert.Equal(t, "bbb", testService.ReadContent())
-	assert.Equal(t, "bbb", app.Make("test").(*TestService).ReadContent())
+	assert.Equal(t, "bbb", app.MustMake("test").(*TestService).ReadContent())
 
 	// 测试容器的Bind（no Shared）效果
-	testService3 := app.Make("test2").(*TestService)
+	testService3 := app.MustMake("test2").(*TestService)
 	testService3.WriteContent("aaa")
 	assert.Equal(t, "aaa", testService3.ReadContent())
 
-	testService4 := app.Make("test2").(*TestService)
+	testService4 := app.MustMake("test2").(*TestService)
 	testService4.WriteContent("bbb")
 	assert.Equal(t, "bbb", testService4.ReadContent())
 	assert.Equal(t, "aaa", testService3.ReadContent())
-	assert.Equal(t, "", app.Make("test2").(*TestService).ReadContent())
+	assert.Equal(t, "", app.MustMake("test2").(*TestService).ReadContent())
 }
 
 func TestApplication_AppInstance(t *testing.T) {
@@ -60,16 +60,16 @@ func TestApplication_AppInstance(t *testing.T) {
 	app.Register(NewTestProvider(app))
 
 	// GetInstance
-	GetInstance().Make("test").(*TestService).WriteContent("aaa")
-	assert.Equal(t, "aaa", GetInstance().Make("test").(*TestService).ReadContent())
+	GetInstance().MustMake("test").(*TestService).WriteContent("aaa")
+	assert.Equal(t, "aaa", GetInstance().MustMake("test").(*TestService).ReadContent())
 
 	// App
-	App().Make("test").(*TestService).WriteContent("bbb")
-	assert.Equal(t, "bbb", App().Make("test").(*TestService).ReadContent())
+	App().MustMake("test").(*TestService).WriteContent("bbb")
+	assert.Equal(t, "bbb", App().MustMake("test").(*TestService).ReadContent())
 
 	// Instance
-	Instance().Make("test").(*TestService).WriteContent("ccc")
-	assert.Equal(t, "ccc", Instance().Make("test").(*TestService).ReadContent())
+	Instance().MustMake("test").(*TestService).WriteContent("ccc")
+	assert.Equal(t, "ccc", Instance().MustMake("test").(*TestService).ReadContent())
 }
 
 func TestApplication_Instance(t *testing.T) {
@@ -80,22 +80,22 @@ func TestApplication_Instance(t *testing.T) {
 		"key":  "value",
 		"key1": "value1",
 	})
-	assert.Equal(t, "value", app.Make("config").(map[string]string)["key"])
+	assert.Equal(t, "value", app.MustMake("config").(map[string]string)["key"])
 
 	// string
 	app.Instance("path.base", "dirname")
-	assert.Equal(t, "dirname", app.Make("path.base").(string))
+	assert.Equal(t, "dirname", app.MustMake("path.base").(string))
 
 	// struct
 	type TestStruct struct {
 		Name string
 	}
 	app.Instance("test", &TestStruct{"test"})
-	assert.Equal(t, "test", app.Make("test").(*TestStruct).Name)
+	assert.Equal(t, "test", app.MustMake("test").(*TestStruct).Name)
 
 	// func
 	app.Instance("func", func() string {
 		return "func"
 	})
-	assert.Equal(t, "func", app.Make("func").(func() string)())
+	assert.Equal(t, "func", app.MustMake("func").(func() string)())
 }
