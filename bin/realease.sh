@@ -58,7 +58,7 @@ git tag $VERSION
 git push origin --tags
 
 # Tag Components
-for REMOTE in support
+for REMOTE in foundtion config
 do
     echo ""
     echo ""
