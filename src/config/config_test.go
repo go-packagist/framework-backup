@@ -21,11 +21,15 @@ func TestConfig_ServiceProvider(t *testing.T) {
 
 	app.Register(NewConfigProvider(app))
 
-	app.Make("config").(*Config).Add("test", "test")
-	fmt.Println(app.Make("config").(*Config).Get("test"))
-
-	// assert.Equal(t, )
 	fmt.Println(app)
+
+	config, err := app.Make("config")
+	facade := config.(*Config)
+
+	facade.Add("test", "test")
+
+	assert.Equal(t, "test", facade.Get("test"))
+	assert.Nil(t, err)
 }
 
 func TestConfig_Facades(t *testing.T) {
@@ -33,9 +37,12 @@ func TestConfig_Facades(t *testing.T) {
 
 	app.Register(NewConfigProvider(app))
 
-	Facade().Add("test", "test")
+	facade, err := Facade()
 
-	assert.Equal(t, "test", Facade().Get("test"))
+	facade.Add("test", "test")
+
+	assert.Equal(t, "test", facade.Get("test"))
+	assert.Nil(t, err)
 }
 
 func TestConfig_Add(t *testing.T) {
@@ -43,20 +50,27 @@ func TestConfig_Add(t *testing.T) {
 
 	app.Register(NewConfigProvider(app))
 
-	Facade().Add("app", map[string]interface{}{
+	MustFacade().Add("app", map[string]interface{}{
 		"name":     "test",
 		"debug":    true,
 		"timezone": "Beijing",
+		"map": map[string]interface{}{
+			"key": "value",
+		},
 	})
 
-	assert.Equal(t, "test", Facade().Get("app.name"))
-	assert.Equal(t, true, Facade().Get("app.debug"))
-	assert.Equal(t, "Beijing", Facade().Get("app.timezone"))
+	assert.Equal(t, "test", MustFacade().Get("app.name"))
+	assert.Equal(t, true, MustFacade().Get("app.debug"))
+	assert.Equal(t, "Beijing", MustFacade().Get("app.timezone"))
+	assert.Equal(t, "value", MustFacade().Get("app.map.key"))
 	assert.Equal(t, map[string]interface{}{
 		"app": map[string]interface{}{
 			"name":     "test",
 			"debug":    true,
 			"timezone": "Beijing",
+			"map": map[string]interface{}{
+				"key": "value",
+			},
 		},
-	}, Facade().GetAll())
+	}, MustFacade().GetAll())
 }

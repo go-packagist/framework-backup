@@ -6,6 +6,7 @@ import (
 
 // Config represents the config.
 type Config struct {
+	viper   *viper.Viper
 	Options *Options
 }
 
@@ -14,6 +15,7 @@ func New(options *Options) *Config {
 	options.Prepare()
 
 	config := &Config{
+		viper:   viper.New(),
 		Options: options,
 	}
 
@@ -24,10 +26,10 @@ func New(options *Options) *Config {
 
 // init initializes the config.
 func (c *Config) init() {
-	viper.SetConfigType("env")
-	viper.AddConfigPath(".")
-	viper.SetEnvPrefix(c.Options.GetPrefix())
-	viper.AutomaticEnv()
+	c.viper.SetConfigType("env")
+	c.viper.AddConfigPath(".")
+	c.viper.SetEnvPrefix(c.Options.GetPrefix())
+	c.viper.AutomaticEnv()
 }
 
 // GetOptions returns the options.
@@ -36,7 +38,7 @@ func (c *Config) GetOptions() *Options {
 }
 
 func (c *Config) Env(key string) interface{} {
-	return viper.Get(key)
+	return c.viper.Get(key)
 }
 
 // GetEnvPath returns the env path.
@@ -46,32 +48,32 @@ func (c *Config) GetEnvPath() string {
 
 // Add adds the key and value to the config.
 func (c *Config) Add(key string, value interface{}) {
-	viper.Set(key, value)
+	c.viper.Set(key, value)
 }
 
 // Set sets the options.
 func (c *Config) Set(key string, value interface{}) {
-	viper.Set(key, value)
+	c.viper.Set(key, value)
 }
 
 // Get returns the value by the key.
 func (c *Config) Get(key string) interface{} {
-	return viper.Get(key)
+	return c.viper.Get(key)
 }
 
 // GetString returns the string by the key.
 func (c *Config) GetString(key string) string {
-	return viper.GetString(key)
+	return c.viper.GetString(key)
 }
 
 // GetBool returns the bool by the key.
 func (c *Config) GetBool(key string) bool {
-	return viper.GetBool(key)
+	return c.viper.GetBool(key)
 }
 
 // GetAll returns the all config.
 func (c *Config) GetAll() map[string]interface{} {
-	return viper.AllSettings()
+	return c.viper.AllSettings()
 }
 
 // Options represents the config options.

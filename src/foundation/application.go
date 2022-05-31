@@ -1,8 +1,11 @@
 package foundation
 
 import (
+	"errors"
+	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 )
 
 type ConcreteFunc func(*Application) interface{}
@@ -20,6 +23,8 @@ type Application struct {
 
 	bindings  map[string]binding
 	instances map[string]interface{}
+
+	rwlock *sync.RWMutex
 }
 
 // VERSION is the current version of the application.
@@ -33,6 +38,7 @@ func NewApplication(basePath string) *Application {
 		providers: []Provider{},
 		bindings:  make(map[string]binding),
 		instances: make(map[string]interface{}),
+		rwlock:    &sync.RWMutex{},
 	}
 
 	// 设置basePath
@@ -103,6 +109,9 @@ func (app *Application) Singleton(abstract string, concrete ConcreteFunc) {
 
 // Bind Register a binding with the container.
 func (app *Application) Bind(abstract string, concrete ConcreteFunc, shared bool) {
+	app.rwlock.Lock()
+	defer app.rwlock.Unlock()
+
 	app.bindings[abstract] = binding{
 		abstract: abstract,
 		concrete: concrete,
@@ -111,26 +120,39 @@ func (app *Application) Bind(abstract string, concrete ConcreteFunc, shared bool
 }
 
 func (app *Application) Instance(abstract string, concrete interface{}) {
+	app.rwlock.Lock()
+	defer app.rwlock.Unlock()
+
 	app.instances[abstract] = concrete
 }
 
 // Make Resolve the given type from the container.
-func (app *Application) Make(abstract string) interface{} {
+func (app *Application) Make(abstract string) (interface{}, error) {
 	return app.Resolve(abstract)
 }
 
+// MustMake Resolve the given type from the container or panic.
+func (app *Application) MustMake(abstract string) interface{} {
+	concrete, err := app.Make(abstract)
+	if err != nil {
+		panic(err)
+	}
+
+	return concrete
+}
+
 // Resolve the given type from the container.
-func (app *Application) Resolve(abstract string) interface{} {
+func (app *Application) Resolve(abstract string) (interface{}, error) {
 	// instance
 	instance, ok := app.instances[abstract]
 	if ok {
-		return instance
+		return instance, nil
 	}
 
 	// binding
 	binding, ok2 := app.bindings[abstract]
 	if !ok2 {
-		panic(abstract + "not found")
+		return nil, errors.New(fmt.Sprintf("[%s] binding not found", abstract))
 	}
 
 	// concrete(app)
@@ -140,7 +162,7 @@ func (app *Application) Resolve(abstract string) interface{} {
 		app.Instance(abstract, concrete)
 	}
 
-	return concrete
+	return concrete, nil
 }
 
 // isShared Determine if a given type is shared.
