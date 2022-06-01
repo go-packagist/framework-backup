@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/go-packagist/foundation v0.0.4
+	github.com/golang-module/carbon/v2 v2.1.8
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.7.1
 )
