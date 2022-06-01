@@ -19,11 +19,7 @@ func (b *BcryptHasher) Make(value string) (string, error) {
 
 // MustMake returns the hashed value.
 func (b *BcryptHasher) MustMake(value string) string {
-	hashedValue, err := b.Make(value)
-
-	if err != nil {
-		panic(err)
-	}
+	hashedValue, _ := b.Make(value)
 
 	return hashedValue
 }
