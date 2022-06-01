@@ -6,7 +6,7 @@ import (
 )
 
 func TestManager_Driver(t *testing.T) {
-	m := NewManager(map[string]interface{}{
+	m := NewHashManager(map[string]interface{}{
 		"driver": "bcrypt",
 	})
 

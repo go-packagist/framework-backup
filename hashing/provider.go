@@ -22,7 +22,7 @@ func NewHashProvider(app *foundation.Application) *hashProvider {
 // Register registers the hashing services into the application.
 func (p *hashProvider) Register() {
 	p.app.Singleton("hash", func(app *foundation.Application) interface{} {
-		return NewManager(app.MustMake("config").(*config.Config).Get("hashing").(map[string]interface{}))
+		return NewHashManager(app.MustMake("config").(*config.Config).Get("hashing").(map[string]interface{}))
 	})
 
 	p.app.Singleton("hash.bcrypt", func(app *foundation.Application) interface{} {

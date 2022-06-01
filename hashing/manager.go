@@ -14,7 +14,7 @@ type HashManager struct {
 // 	config := map[string]interface{}{
 // 		"driver": "bcrypt",
 // 	}
-func NewManager(config map[string]interface{}) *HashManager {
+func NewHashManager(config map[string]interface{}) *HashManager {
 	return &HashManager{
 		config:  config,
 		drivers: make(map[string]Hasher),
