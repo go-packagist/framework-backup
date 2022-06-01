@@ -20,34 +20,34 @@ import (
 )
 
 func main()  {
-	// use hashing.NewBcryptHasher
-	bcrypt := hashing.NewBcryptHasher()
-
-	bcrypt.Make("password")
-	bcrypt.MustMake("password")
-	bcrypt.Check("password", "hashed password")
-	
-	// use Manager
-	m := hashing.NewManager(map[string]interface{}{
-		"driver": "bcrypt",
+    // use hashing.NewBcryptHasher
+    bcrypt := hashing.NewBcryptHasher()
+    
+    bcrypt.Make("password")
+    bcrypt.MustMake("password")
+    bcrypt.Check("password", "hashed password")
+    
+    // use Manager
+    m := hashing.NewManager(map[string]interface{}{
+        "driver": "bcrypt",
     })
-	
-	m.Driver("bcrypt").Make("password")
-	m.Driver().Make("password")
-	
-	// use foundation.Application
-	app := foundation.NewApplication("./")
-
-	app.Register(config.NewConfigProvider(app))
-	app.MustMake("config").(*config.Config).Set("hashing", map[string]interface{}{
-		"driver": "bcrypt",
-	})
-	
-	app.Register(hashing.NewHashProvider(app))
-	
-	hashing.FacadeMustHash().Driver("bcrypt").Make("password")
-	hashing.FacadeMustHashBcrypt().Make("password")
-	app.MustMake("hash").(*hashing.HashManager).Driver("bcrypt").Make("password")
+    
+    m.Driver("bcrypt").Make("password")
+    m.Driver().Make("password")
+    
+    // use foundation.Application
+    app := foundation.NewApplication("./")
+    
+    app.Register(config.NewConfigProvider(app))
+    app.MustMake("config").(*config.Config).Set("hashing", map[string]interface{}{
+        "driver": "bcrypt",
+    })
+    
+    app.Register(hashing.NewHashProvider(app))
+    
+    hashing.FacadeMustHash().Driver("bcrypt").Make("password")
+    hashing.FacadeMustHashBcrypt().Make("password")
+    app.MustMake("hash").(*hashing.HashManager).Driver("bcrypt").Make("password")
 }
 ```
 
