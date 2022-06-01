@@ -1,6 +1,6 @@
 package config
 
-import "github.com/go-packagist/foundation"
+import "github.com/go-packagist/framework/foundation"
 
 type Provider struct {
 	app *foundation.Application

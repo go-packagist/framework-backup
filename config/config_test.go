@@ -1,8 +1,7 @@
 package config
 
 import (
-	"fmt"
-	"github.com/go-packagist/foundation"
+	"github.com/go-packagist/framework/foundation"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -20,8 +19,6 @@ func TestConfig_ServiceProvider(t *testing.T) {
 	app := foundation.NewApplication("./")
 
 	app.Register(NewConfigProvider(app))
-
-	fmt.Println(app)
 
 	config, err := app.Make("config")
 	facade := config.(*Config)
