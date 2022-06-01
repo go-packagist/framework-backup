@@ -133,10 +133,7 @@ func (app *Application) Make(abstract string) (interface{}, error) {
 
 // MustMake Resolve the given type from the container or panic.
 func (app *Application) MustMake(abstract string) interface{} {
-	concrete, err := app.Make(abstract)
-	if err != nil {
-		panic(err)
-	}
+	concrete, _ := app.Make(abstract)
 
 	return concrete
 }

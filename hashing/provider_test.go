@@ -18,14 +18,8 @@ func TestProvider(t *testing.T) {
 	assert.True(t, app.MustMake("hash").(*HashManager).Driver().Check(value, hashedValue))
 
 	// hash.bcrypt
-	hashedValue2 := app.MustMake("hash.bcrypt").(*BcryptHasher).MustMake(value)
-	assert.True(t, app.MustMake("hash.bcrypt").(*BcryptHasher).Check(value, hashedValue2))
-
-	// Facade
-	hashedValue3 := FacadeMustHash().Driver().MustMake(value)
-	assert.True(t, FacadeMustHash().Driver().Check(value, hashedValue3))
-	hashedValue4 := FacadeMustHashBcrypt().MustMake(value)
-	assert.True(t, FacadeMustHashBcrypt().Check(value, hashedValue4))
+	hashedValue2 := app.MustMake("hasher.bcrypt").(*BcryptHasher).MustMake(value)
+	assert.True(t, app.MustMake("hasher.bcrypt").(*BcryptHasher).Check(value, hashedValue2))
 }
 
 func createApp() *foundation.Application {

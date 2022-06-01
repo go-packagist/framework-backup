@@ -29,25 +29,14 @@ func TestConfig_ServiceProvider(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestConfig_Facades(t *testing.T) {
-	app := foundation.NewApplication("./")
-
-	app.Register(NewConfigProvider(app))
-
-	facade, err := Facade()
-
-	facade.Add("test", "test")
-
-	assert.Equal(t, "test", facade.Get("test"))
-	assert.Nil(t, err)
-}
-
 func TestConfig_Add(t *testing.T) {
 	app := foundation.NewApplication("./")
 
 	app.Register(NewConfigProvider(app))
 
-	MustFacade().Add("app", map[string]interface{}{
+	config := app.MustMake("config").(*Config)
+
+	config.Add("app", map[string]interface{}{
 		"name":     "test",
 		"debug":    true,
 		"timezone": "Beijing",
@@ -56,10 +45,10 @@ func TestConfig_Add(t *testing.T) {
 		},
 	})
 
-	assert.Equal(t, "test", MustFacade().Get("app.name"))
-	assert.Equal(t, true, MustFacade().Get("app.debug"))
-	assert.Equal(t, "Beijing", MustFacade().Get("app.timezone"))
-	assert.Equal(t, "value", MustFacade().Get("app.map.key"))
+	assert.Equal(t, "test", config.Get("app.name"))
+	assert.Equal(t, true, config.Get("app.debug"))
+	assert.Equal(t, "Beijing", config.Get("app.timezone"))
+	assert.Equal(t, "value", config.Get("app.map.key"))
 	assert.Equal(t, map[string]interface{}{
 		"app": map[string]interface{}{
 			"name":     "test",
@@ -69,5 +58,5 @@ func TestConfig_Add(t *testing.T) {
 				"key": "value",
 			},
 		},
-	}, MustFacade().GetAll())
+	}, config.GetAll())
 }

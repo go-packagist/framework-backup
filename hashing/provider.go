@@ -25,7 +25,7 @@ func (p *hashProvider) Register() {
 		return NewHashManager(app.MustMake("config").(*config.Config).Get("hashing").(map[string]interface{}))
 	})
 
-	p.app.Singleton("hash.bcrypt", func(app *foundation.Application) interface{} {
+	p.app.Singleton("hasher.bcrypt", func(app *foundation.Application) interface{} {
 		return NewBcryptHasher()
 	})
 }
