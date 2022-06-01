@@ -1,6 +1,9 @@
 package hashing
 
-import "crypto/md5"
+import (
+	"crypto/md5"
+	"fmt"
+)
 
 type Md5Hasher struct {
 }
@@ -16,7 +19,7 @@ func NewMd5Hasher() *Md5Hasher {
 func (m *Md5Hasher) Make(value string) (string, error) {
 	hashedValue := md5.Sum([]byte(value))
 
-	return string(hashedValue[:]), nil
+	return fmt.Sprintf("%x", hashedValue), nil
 }
 
 // MustMake generates a new hashed value.
