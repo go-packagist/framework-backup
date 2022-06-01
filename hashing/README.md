@@ -30,7 +30,7 @@ func main()  {
     // use Manager
     m := hashing.NewManager(map[string]interface{}{
         "driver": "bcrypt",
-    })
+	})
     
     m.Driver("bcrypt").Make("password")
     m.Driver().Make("password")
