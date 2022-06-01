@@ -9,7 +9,7 @@ type HashManager struct {
 	drivers map[string]Hasher
 }
 
-// NewManager creates a new hashing manager instance.
+// NewHashManager creates a new hashing manager instance.
 // config example:
 // 	config := map[string]interface{}{
 // 		"driver": "bcrypt",
