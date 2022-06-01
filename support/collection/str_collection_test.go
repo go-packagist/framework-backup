@@ -361,9 +361,9 @@ func TestStrCollection_Shuffle(t *testing.T) {
 		"a", "b", "c",
 	})
 
-	var flag bool
+	flag := false
 
-	for i := 0; i <= 10; i++ {
+	for {
 		cs := c.Shuffle()
 
 		if !reflect.DeepEqual(c, cs) {
