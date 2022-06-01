@@ -17,6 +17,7 @@ import (
 	"github.com/go-packagist/framework/hashing"
 	"github.com/go-packagist/framework/config"
 	"github.com/go-packagist/framework/foundation"
+	"github.com/go-packagist/framework/support/facades"
 )
 
 func main()  {
@@ -35,7 +36,7 @@ func main()  {
     m.Driver("bcrypt").Make("password")
     m.Driver().Make("password")
     
-    // use foundation.Application
+    // use facades
     app := foundation.NewApplication("./")
     
     app.Register(config.NewConfigProvider(app))
@@ -44,9 +45,12 @@ func main()  {
     })
     
     app.Register(hashing.NewHashProvider(app))
-    
-    hashing.FacadeMustHash().Driver("bcrypt").Make("password")
-    hashing.FacadeMustHashBcrypt().Make("password")
+	
+	facades.MustHash().Driver().Make("password")
+	facades.MustHash().Driver("bcrypt").Make("password")
+	facades.MustHash().Driver("md5").Make("password")
+    facades.BcryptHasher().Make("password")
+	facades.Md5Hasher().Make("password")
     app.MustMake("hash").(*hashing.HashManager).Driver("bcrypt").Make("password")
 }
 ```
