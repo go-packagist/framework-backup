@@ -1,0 +1,32 @@
+package hashing
+
+import "crypto/md5"
+
+type Md5Hasher struct {
+}
+
+var _ Hasher = (*Md5Hasher)(nil)
+
+// NewMd5Hasher creates a new md5 hasher instance.
+func NewMd5Hasher() *Md5Hasher {
+	return &Md5Hasher{}
+}
+
+// Make generates a new hashed value.
+func (m *Md5Hasher) Make(value string) (string, error) {
+	hashedValue := md5.Sum([]byte(value))
+
+	return string(hashedValue[:]), nil
+}
+
+// MustMake generates a new hashed value.
+func (m *Md5Hasher) MustMake(value string) string {
+	hashedValue, _ := m.Make(value)
+
+	return hashedValue
+}
+
+// Check checks the given value and hashed value.
+func (m *Md5Hasher) Check(value, hashedValue string) bool {
+	return m.MustMake(value) == hashedValue
+}

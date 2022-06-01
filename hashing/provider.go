@@ -28,4 +28,8 @@ func (p *hashProvider) Register() {
 	p.app.Singleton("hasher.bcrypt", func(app *foundation.Application) interface{} {
 		return NewBcryptHasher()
 	})
+
+	p.app.Singleton("hasher.md5", func(app *foundation.Application) interface{} {
+		return NewMd5Hasher()
+	})
 }
