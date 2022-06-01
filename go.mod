@@ -10,4 +10,5 @@ require (
 	github.com/golang-module/carbon/v2 v2.1.8
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.7.1
+	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 )

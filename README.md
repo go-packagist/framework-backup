@@ -9,6 +9,6 @@ _——The idea came from [Laravel](https://github.com/laravel)_
 - [ ] [support](./support)
 - [ ] [filesystem](./filesystem)
 - [ ] [cache](./cache)
-- [ ] [hashing](./hashing)
+- [x] [hashing](./hashing)
 - [ ] [redis](./redis)
 - [ ] [database](./database)
