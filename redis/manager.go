@@ -17,14 +17,18 @@ func NewManager(app *foundation.Application) *Manager {
 	}
 }
 
-func (m *Manager) Connection(name string) Connection {
-	if conn, ok := m.connections[name]; ok {
+func (m *Manager) Connection(name ...string) Connection {
+	if len(name) == 0 {
+		name = []string{m.getDefaultName()}
+	}
+
+	if conn, ok := m.connections[name[0]]; ok {
 		return conn
 	}
 
-	m.connections[name] = m.resolve(name)
+	m.connections[name[0]] = m.resolve(name[0])
 
-	return m.connections[name]
+	return m.connections[name[0]]
 }
 
 func (m *Manager) resolve(name string) Connection {
@@ -50,4 +54,8 @@ func (m *Manager) createRedisConnection(config map[string]interface{}) Connectio
 	conn.Connect(config)
 
 	return conn
+}
+
+func (m *Manager) getDefaultName() string {
+	return m.app.MustMake("config").(*config.Config).Get("redis.default").(string)
 }

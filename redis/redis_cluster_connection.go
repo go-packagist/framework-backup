@@ -3,212 +3,209 @@ package redis
 import (
 	"context"
 	r "github.com/go-redis/redis/v8"
-	"strconv"
 	"time"
 )
 
-// RedisConnection is a connection to a redis database.
-type RedisConnection struct {
-	client *r.Client
+// RedisClusterConnection is a connection to a redis database.
+type RedisClusterConnection struct {
+	client *r.ClusterClient
 	ctx    context.Context
 }
 
-var _ Connection = (*RedisConnection)(nil)
+var _ Connection = (*RedisClusterConnection)(nil)
 
-// NewRedisConnection creates a new redis connection.
-func NewRedisConnection() Connection {
-	return &RedisConnection{
+// NewRedisClusterConnection creates a new redis connection.
+func NewRedisClusterConnection() Connection {
+	return &RedisClusterConnection{
 		ctx: context.Background(),
 	}
 }
 
 // Connect connects to the redis database.
-func (c *RedisConnection) Connect(config map[string]interface{}) {
-	c.client = r.NewClient(&r.Options{
-		Addr:     config["host"].(string) + ":" + strconv.Itoa(config["port"].(int)),
-		Password: config["password"].(string),
-		DB:       config["database"].(int),
+func (c *RedisClusterConnection) Connect(config map[string]interface{}) {
+	c.client = r.NewClusterClient(&r.ClusterOptions{
+		Addrs: config["addrs"].([]string),
 	})
 }
 
 // Echo returns the given string.
-func (c *RedisConnection) Echo(message string) (string, error) {
+func (c *RedisClusterConnection) Echo(message string) (string, error) {
 	return c.client.Echo(c.ctx, message).Result()
 }
 
 // Ping returns the redis ping.
-func (c *RedisConnection) Ping() (string, error) {
+func (c *RedisClusterConnection) Ping() (string, error) {
 	return c.client.Ping(c.ctx).Result()
 }
 
 // Del deletes the given keys.
 //	c.Del("key1", "key2")
 //	c.Del("key3")
-func (c *RedisConnection) Del(keys ...string) (int64, error) {
+func (c *RedisClusterConnection) Del(keys ...string) (int64, error) {
 	return c.client.Del(c.ctx, keys...).Result()
 }
 
-func (c *RedisConnection) Exists(keys ...string) (int64, error) {
+func (c *RedisClusterConnection) Exists(keys ...string) (int64, error) {
 	return c.client.Exists(c.ctx, keys...).Result()
 }
 
-func (c *RedisConnection) Expire(key string, expiration time.Duration) (bool, error) {
+func (c *RedisClusterConnection) Expire(key string, expiration time.Duration) (bool, error) {
 	return c.client.Expire(c.ctx, key, expiration).Result()
 }
 
-func (c *RedisConnection) ExpireAt(key string, tm time.Time) (bool, error) {
+func (c *RedisClusterConnection) ExpireAt(key string, tm time.Time) (bool, error) {
 	return c.client.ExpireAt(c.ctx, key, tm).Result()
 }
 
-func (c *RedisConnection) ExpireNX(key string, expiration time.Duration) (bool, error) {
+func (c *RedisClusterConnection) ExpireNX(key string, expiration time.Duration) (bool, error) {
 	return c.client.ExpireNX(c.ctx, key, expiration).Result()
 }
 
-func (c *RedisConnection) ExpireXX(key string, expiration time.Duration) (bool, error) {
+func (c *RedisClusterConnection) ExpireXX(key string, expiration time.Duration) (bool, error) {
 	return c.client.ExpireXX(c.ctx, key, expiration).Result()
 }
 
-func (c *RedisConnection) ExpireGT(key string, expiration time.Duration) (bool, error) {
+func (c *RedisClusterConnection) ExpireGT(key string, expiration time.Duration) (bool, error) {
 	return c.client.ExpireGT(c.ctx, key, expiration).Result()
 }
 
-func (c *RedisConnection) ExpireLT(key string, expiration time.Duration) (bool, error) {
+func (c *RedisClusterConnection) ExpireLT(key string, expiration time.Duration) (bool, error) {
 	return c.client.ExpireLT(c.ctx, key, expiration).Result()
 }
 
-func (c *RedisConnection) DBSize() (int64, error) {
+func (c *RedisClusterConnection) DBSize() (int64, error) {
 	return c.client.DBSize(c.ctx).Result()
 }
 
-func (c *RedisConnection) Keys(pattern string) ([]string, error) {
+func (c *RedisClusterConnection) Keys(pattern string) ([]string, error) {
 	return c.client.Keys(c.ctx, pattern).Result()
 }
 
-func (c *RedisConnection) Migrate(host, port, key string, db int, timeout time.Duration) (string, error) {
+func (c *RedisClusterConnection) Migrate(host, port, key string, db int, timeout time.Duration) (string, error) {
 	return c.client.Migrate(c.ctx, host, port, key, db, timeout).Result()
 }
 
-func (c *RedisConnection) Move(key string, db int) (bool, error) {
+func (c *RedisClusterConnection) Move(key string, db int) (bool, error) {
 	return c.client.Move(c.ctx, key, db).Result()
 }
 
-func (c *RedisConnection) Persist(key string) (bool, error) {
+func (c *RedisClusterConnection) Persist(key string) (bool, error) {
 	return c.client.Persist(c.ctx, key).Result()
 }
 
-func (c *RedisConnection) PExpire(key string, expiration time.Duration) (bool, error) {
+func (c *RedisClusterConnection) PExpire(key string, expiration time.Duration) (bool, error) {
 	return c.client.PExpire(c.ctx, key, expiration).Result()
 }
 
-func (c *RedisConnection) PExpireAt(key string, tm time.Time) (bool, error) {
+func (c *RedisClusterConnection) PExpireAt(key string, tm time.Time) (bool, error) {
 	return c.client.PExpireAt(c.ctx, key, tm).Result()
 }
 
-func (c *RedisConnection) PTTL(key string) (time.Duration, error) {
+func (c *RedisClusterConnection) PTTL(key string) (time.Duration, error) {
 	return c.client.PTTL(c.ctx, key).Result()
 }
 
-func (c *RedisConnection) RandomKey() (string, error) {
+func (c *RedisClusterConnection) RandomKey() (string, error) {
 	return c.client.RandomKey(c.ctx).Result()
 }
 
-func (c *RedisConnection) Rename(key, newKey string) (string, error) {
+func (c *RedisClusterConnection) Rename(key, newKey string) (string, error) {
 	return c.client.Rename(c.ctx, key, newKey).Result()
 }
 
-func (c *RedisConnection) RenameNX(key, newKey string) (bool, error) {
+func (c *RedisClusterConnection) RenameNX(key, newKey string) (bool, error) {
 	return c.client.RenameNX(c.ctx, key, newKey).Result()
 }
 
-func (c *RedisConnection) Restore(key string, ttl time.Duration, value string) (string, error) {
+func (c *RedisClusterConnection) Restore(key string, ttl time.Duration, value string) (string, error) {
 	return c.client.Restore(c.ctx, key, ttl, value).Result()
 }
 
-func (c *RedisConnection) RestoreReplace(key string, ttl time.Duration, value string) (string, error) {
+func (c *RedisClusterConnection) RestoreReplace(key string, ttl time.Duration, value string) (string, error) {
 	return c.client.RestoreReplace(c.ctx, key, ttl, value).Result()
 }
 
-func (c *RedisConnection) Sort(key string, sort *r.Sort) ([]string, error) {
+func (c *RedisClusterConnection) Sort(key string, sort *r.Sort) ([]string, error) {
 	return c.client.Sort(c.ctx, key, sort).Result()
 }
 
-func (c *RedisConnection) SortStore(key, store string, sort *r.Sort) (int64, error) {
+func (c *RedisClusterConnection) SortStore(key, store string, sort *r.Sort) (int64, error) {
 	return c.client.SortStore(c.ctx, key, store, sort).Result()
 }
 
-func (c *RedisConnection) SortInterfaces(key string, sort *r.Sort) ([]interface{}, error) {
+func (c *RedisClusterConnection) SortInterfaces(key string, sort *r.Sort) ([]interface{}, error) {
 	return c.client.SortInterfaces(c.ctx, key, sort).Result()
 }
 
-func (c *RedisConnection) Touch(keys ...string) (int64, error) {
+func (c *RedisClusterConnection) Touch(keys ...string) (int64, error) {
 	return c.client.Touch(c.ctx, keys...).Result()
 }
 
-func (c *RedisConnection) TTL(key string) (time.Duration, error) {
+func (c *RedisClusterConnection) TTL(key string) (time.Duration, error) {
 	return c.client.TTL(c.ctx, key).Result()
 }
 
-func (c *RedisConnection) Type(key string) (string, error) {
+func (c *RedisClusterConnection) Type(key string) (string, error) {
 	return c.client.Type(c.ctx, key).Result()
 }
 
-func (c *RedisConnection) Append(key, value string) (int64, error) {
+func (c *RedisClusterConnection) Append(key, value string) (int64, error) {
 	return c.client.Append(c.ctx, key, value).Result()
 }
 
-func (c *RedisConnection) Decr(key string) (int64, error) {
+func (c *RedisClusterConnection) Decr(key string) (int64, error) {
 	return c.client.Decr(c.ctx, key).Result()
 }
 
-func (c *RedisConnection) DecrBy(key string, decrement int64) (int64, error) {
+func (c *RedisClusterConnection) DecrBy(key string, decrement int64) (int64, error) {
 	return c.client.DecrBy(c.ctx, key, decrement).Result()
 }
 
-func (c *RedisConnection) Get(key string) (string, error) {
+func (c *RedisClusterConnection) Get(key string) (string, error) {
 	return c.client.Get(c.ctx, key).Result()
 }
 
-func (c *RedisConnection) GetRange(key string, start, end int64) (string, error) {
+func (c *RedisClusterConnection) GetRange(key string, start, end int64) (string, error) {
 	return c.client.GetRange(c.ctx, key, start, end).Result()
 }
 
-func (c *RedisConnection) GetSet(key string, value interface{}) (string, error) {
+func (c *RedisClusterConnection) GetSet(key string, value interface{}) (string, error) {
 	return c.client.GetSet(c.ctx, key, value).Result()
 }
 
-func (c *RedisConnection) GetEx(key string, expiration time.Duration) (string, error) {
+func (c *RedisClusterConnection) GetEx(key string, expiration time.Duration) (string, error) {
 	return c.client.GetEx(c.ctx, key, expiration).Result()
 }
 
-func (c *RedisConnection) GetDel(key string) (string, error) {
+func (c *RedisClusterConnection) GetDel(key string) (string, error) {
 	return c.client.GetDel(c.ctx, key).Result()
 }
 
-func (c *RedisConnection) Incr(key string) (int64, error) {
+func (c *RedisClusterConnection) Incr(key string) (int64, error) {
 	return c.client.Incr(c.ctx, key).Result()
 }
 
-func (c *RedisConnection) IncrBy(key string, value int64) (int64, error) {
+func (c *RedisClusterConnection) IncrBy(key string, value int64) (int64, error) {
 	return c.client.IncrBy(c.ctx, key, value).Result()
 }
 
-func (c *RedisConnection) IncrByFloat(key string, value float64) (float64, error) {
+func (c *RedisClusterConnection) IncrByFloat(key string, value float64) (float64, error) {
 	return c.client.IncrByFloat(c.ctx, key, value).Result()
 }
 
-func (c *RedisConnection) MGet(keys ...string) ([]interface{}, error) {
+func (c *RedisClusterConnection) MGet(keys ...string) ([]interface{}, error) {
 	return c.client.MGet(c.ctx, keys...).Result()
 }
 
-func (c *RedisConnection) MSet(values ...interface{}) (string, error) {
+func (c *RedisClusterConnection) MSet(values ...interface{}) (string, error) {
 	return c.client.MSet(c.ctx, values...).Result()
 }
 
-func (c *RedisConnection) MSetNX(values ...interface{}) (bool, error) {
+func (c *RedisClusterConnection) MSetNX(values ...interface{}) (bool, error) {
 	return c.client.MSetNX(c.ctx, values...).Result()
 }
 
-func (c *RedisConnection) Set(key string, value interface{}, expiration time.Duration) (string, error) {
+func (c *RedisClusterConnection) Set(key string, value interface{}, expiration time.Duration) (string, error) {
 	return c.client.Set(c.ctx, key, value, expiration).Result()
 }
 
