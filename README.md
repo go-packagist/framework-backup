@@ -6,9 +6,10 @@ _——The idea came from [Laravel](https://github.com/laravel)_
 
 - [x] [foundation](./foundation)
 - [x] [config](./config)
-- [ ] [support](./support)
+- [x] [support](./support): 常用组件完成，更多组件以迭代形式补充
 - [ ] [filesystem](./filesystem)
 - [ ] [cache](./cache)
 - [x] [hashing](./hashing)
-- [ ] [redis](./redis)
+- [x] [redis](./redis): 基础骨架完成，方法待补全（😅 太多了，有时间慢慢补吧……）
 - [ ] [database](./database)
+- [ ] [events](./events)
