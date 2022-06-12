@@ -11,5 +11,5 @@ _——The idea came from [Laravel](https://github.com/laravel)_
 - [ ] [cache](./cache)
 - [x] [hashing](./hashing)
 - [x] [redis](./redis): 基础骨架完成，方法待补全（😅 太多了，有时间慢慢补吧……）
-- [ ] [database](./database)
+- [x] [database](./database)
 - [ ] [events](./events)
