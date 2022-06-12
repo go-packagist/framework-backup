@@ -1,6 +1,7 @@
 package facades
 
 import (
+	"errors"
 	"github.com/go-packagist/framework/config"
 )
 
@@ -12,12 +13,17 @@ func Config() (*config.Config, error) {
 		return nil, err
 	}
 
-	return cfg.(*config.Config), nil
+	switch cfg.(type) {
+	case *config.Config:
+		return cfg.(*config.Config), nil
+	default:
+		return nil, errors.New("config is not a config")
+	}
 }
 
 // MustConfig returns the config facade.
 func MustConfig() *config.Config {
-	config, _ := Config()
+	cfg, _ := Config()
 
-	return config
+	return cfg
 }

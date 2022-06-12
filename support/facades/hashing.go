@@ -1,6 +1,7 @@
 package facades
 
 import (
+	"errors"
 	"github.com/go-packagist/framework/hashing"
 )
 
@@ -11,7 +12,12 @@ func Hash() (*hashing.HashManager, error) {
 		return nil, err
 	}
 
-	return hash.(*hashing.HashManager), nil
+	switch hash.(type) {
+	case *hashing.HashManager:
+		return hash.(*hashing.HashManager), nil
+	default:
+		return nil, errors.New("hash is not a hash manager")
+	}
 }
 
 // MustHash returns the hashing manager.
@@ -28,7 +34,12 @@ func BcryptHasher() (*hashing.BcryptHasher, error) {
 		return nil, err
 	}
 
-	return hash.(*hashing.BcryptHasher), nil
+	switch hash.(type) {
+	case *hashing.BcryptHasher:
+		return hash.(*hashing.BcryptHasher), nil
+	default:
+		return nil, errors.New("hash is not a bcrypt hasher")
+	}
 }
 
 // MustBcryptHasher returns the bcrypt hasher.
@@ -45,7 +56,12 @@ func Md5Hasher() (*hashing.Md5Hasher, error) {
 		return nil, err
 	}
 
-	return hash.(*hashing.Md5Hasher), nil
+	switch hash.(type) {
+	case *hashing.Md5Hasher:
+		return hash.(*hashing.Md5Hasher), nil
+	default:
+		return nil, errors.New("hash is not a md5 hasher")
+	}
 }
 
 // MustMd5Hasher returns the md5 hasher.

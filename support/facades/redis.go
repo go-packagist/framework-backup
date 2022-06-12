@@ -1,21 +1,29 @@
 package facades
 
-import "github.com/go-packagist/framework/redis"
+import (
+	"errors"
+	"github.com/go-packagist/framework/redis"
+)
 
 // Redis returns the redis manager instance.
 func Redis() (*redis.Manager, error) {
-	cfg, err := App().Make("redis")
+	rds, err := App().Make("redis")
 
 	if err != nil {
 		return nil, err
 	}
 
-	return cfg.(*redis.Manager), nil
+	switch rds.(type) {
+	case *redis.Manager:
+		return rds.(*redis.Manager), nil
+	default:
+		return nil, errors.New("rds is not a redis manager")
+	}
 }
 
 // MustRedis returns the redis manager instance.
 func MustRedis() *redis.Manager {
-	redis, _ := Redis()
+	rds, _ := Redis()
 
-	return redis
+	return rds
 }
