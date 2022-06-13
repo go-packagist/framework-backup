@@ -6,22 +6,22 @@ import (
 )
 
 // Hash returns the hashing manager.
-func Hash() (*hashing.HashManager, error) {
+func Hash() (*hashing.Manager, error) {
 	hash, err := App().Make("hash")
 	if err != nil {
 		return nil, err
 	}
 
 	switch hash.(type) {
-	case *hashing.HashManager:
-		return hash.(*hashing.HashManager), nil
+	case *hashing.Manager:
+		return hash.(*hashing.Manager), nil
 	default:
 		return nil, errors.New("hash is not a hash manager")
 	}
 }
 
 // MustHash returns the hashing manager.
-func MustHash() *hashing.HashManager {
+func MustHash() *hashing.Manager {
 	hash, _ := Hash()
 
 	return hash

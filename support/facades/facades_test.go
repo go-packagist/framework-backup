@@ -14,8 +14,8 @@ func createApp() *foundation.Application {
 	app.Register(config.NewConfigProvider(app))
 
 	// set config-hasing
-	app.MustMake("config").(*config.Config).Set("hashing", map[string]interface{}{
-		"driver": "bcrypt",
+	app.MustMake("config").(*config.Config).Set("hashing", &hashing.Config{
+		Driver: "bcrypt",
 	})
 
 	return app
@@ -30,7 +30,7 @@ func TestFacades_App(t *testing.T) {
 func TestFacades_Config(t *testing.T) {
 	createApp()
 
-	assert.Equal(t, "bcrypt", MustConfig().Get("hashing.driver"))
+	assert.Equal(t, "bcrypt", MustConfig().Get("hashing").(*hashing.Config).Driver)
 }
 
 func TestFacades_Hashing(t *testing.T) {
