@@ -4,25 +4,29 @@ import (
 	"fmt"
 )
 
-type HashManager struct {
-	config  map[string]interface{}
+type Manager struct {
+	config  *Config
 	drivers map[string]Hasher
 }
 
-// NewHashManager creates a new hashing manager instance.
+type Config struct {
+	Driver string
+}
+
+// NewManager creates a new hashing manager instance.
 // config example:
-// 	config := map[string]interface{}{
-// 		"driver": "bcrypt",
+// 	config := &Config{
+// 		Driver: "bcrypt",
 // 	}
-func NewHashManager(config map[string]interface{}) *HashManager {
-	return &HashManager{
+func NewManager(config *Config) *Manager {
+	return &Manager{
 		config:  config,
 		drivers: make(map[string]Hasher),
 	}
 }
 
 // Driver gets the hasher instance by driver name.
-func (m *HashManager) Driver(driver ...string) Hasher {
+func (m *Manager) Driver(driver ...string) Hasher {
 	if len(driver) > 0 {
 		return m.resolve(driver[0])
 	}
@@ -31,7 +35,7 @@ func (m *HashManager) Driver(driver ...string) Hasher {
 }
 
 // resolve gets the hasher instance by name.
-func (m *HashManager) resolve(driver string) Hasher {
+func (m *Manager) resolve(driver string) Hasher {
 	hasher, ok := m.drivers[driver]
 
 	if ok {
@@ -53,16 +57,16 @@ func (m *HashManager) resolve(driver string) Hasher {
 }
 
 // createBcryptHasher creates a new bcrypt hasher instance.
-func (m *HashManager) createBcryptHasher() Hasher {
+func (m *Manager) createBcryptHasher() Hasher {
 	return NewBcryptHasher()
 }
 
 // createMd5Hasher creates a new md5 hasher instance.
-func (m *HashManager) createMd5Hasher() Hasher {
+func (m *Manager) createMd5Hasher() Hasher {
 	return NewMd5Hasher()
 }
 
 // getDefaultDriver gets the default driver name.
-func (m *HashManager) getDefaultDriver() string {
-	return m.config["driver"].(string)
+func (m *Manager) getDefaultDriver() string {
+	return m.config.Driver
 }

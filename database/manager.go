@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -51,8 +50,6 @@ func (m *Manager) resolve(name string) Connector {
 	default:
 		panic("driver is not supported")
 	}
-
-	fmt.Println(connector)
 
 	m.connectors[name] = connector
 

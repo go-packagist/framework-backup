@@ -14,8 +14,8 @@ func TestProvider(t *testing.T) {
 
 	// hash
 	value := "123456"
-	hashedValue := app.MustMake("hash").(*HashManager).Driver().MustMake(value)
-	assert.True(t, app.MustMake("hash").(*HashManager).Driver().Check(value, hashedValue))
+	hashedValue := app.MustMake("hash").(*Manager).Driver().MustMake(value)
+	assert.True(t, app.MustMake("hash").(*Manager).Driver().Check(value, hashedValue))
 
 	// hasher.bcrypt
 	hashedValue2 := app.MustMake("hasher.bcrypt").(*BcryptHasher).MustMake(value)
@@ -32,8 +32,8 @@ func createApp() *foundation.Application {
 	app.Register(config.NewConfigProvider(app))
 
 	// set config
-	app.MustMake("config").(*config.Config).Set("hashing", map[string]interface{}{
-		"driver": "bcrypt",
+	app.MustMake("config").(*config.Config).Set("hashing", &Config{
+		Driver: "bcrypt",
 	})
 
 	return app
