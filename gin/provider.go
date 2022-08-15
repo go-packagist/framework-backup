@@ -1,21 +1,23 @@
 package gin
 
-import "github.com/go-packagist/framework/foundation"
+import (
+	"github.com/go-packagist/framework/container"
+)
 
 type Provider struct {
-	app *foundation.Application
+	container *container.Container
 }
 
-var _ foundation.Provider = (*Provider)(nil)
+var _ container.Provider = (*Provider)(nil)
 
-func NewGinProvider(app *foundation.Application) foundation.Provider {
+func NewGinProvider(c *container.Container) container.Provider {
 	return &Provider{
-		app: app,
+		container: c,
 	}
 }
 
 func (p Provider) Register() {
-	p.app.Singleton("gin", func(app *foundation.Application) interface{} {
-		return NewGin(app)
+	p.container.Singleton("gin", func(c *container.Container) interface{} {
+		return NewGin(c)
 	})
 }

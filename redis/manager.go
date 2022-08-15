@@ -2,17 +2,17 @@ package redis
 
 import (
 	"github.com/go-packagist/framework/config"
-	"github.com/go-packagist/framework/foundation"
+	"github.com/go-packagist/framework/container"
 )
 
 type Manager struct {
-	app         *foundation.Application
+	container   *container.Container
 	connections map[string]Connection
 }
 
-func NewManager(app *foundation.Application) *Manager {
+func NewManager(c *container.Container) *Manager {
 	return &Manager{
-		app:         app,
+		container:   c,
 		connections: make(map[string]Connection),
 	}
 }
@@ -32,19 +32,19 @@ func (m *Manager) Connection(name ...string) Connection {
 }
 
 func (m *Manager) resolve(name string) Connection {
-	config := m.app.MustMake("config").(*config.Config).
+	cfg := m.container.MustMake("config").(*config.Config).
 		Get("redis.connections." + name).(map[string]interface{})
 
-	if config == nil {
+	if cfg == nil {
 		panic("redis connection not found: " + name)
 	}
 
 	// driver
-	switch config["driver"].(string) {
+	switch cfg["driver"].(string) {
 	case "redis":
-		return m.createRedisConnection(config)
+		return m.createRedisConnection(cfg)
 	default:
-		panic("redis driver not found: " + config["driver"].(string))
+		panic("redis driver not found: " + cfg["driver"].(string))
 	}
 }
 
@@ -57,5 +57,5 @@ func (m *Manager) createRedisConnection(config map[string]interface{}) Connectio
 }
 
 func (m *Manager) getDefaultName() string {
-	return m.app.MustMake("config").(*config.Config).Get("redis.default").(string)
+	return m.container.MustMake("config").(*config.Config).Get("redis.default").(string)
 }

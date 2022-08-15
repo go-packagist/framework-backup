@@ -1,21 +1,23 @@
 package redis
 
-import "github.com/go-packagist/framework/foundation"
+import (
+	"github.com/go-packagist/framework/container"
+)
 
 type redisProvider struct {
-	app *foundation.Application
+	container *container.Container
 }
 
-var _ foundation.Provider = (*redisProvider)(nil)
+var _ container.Provider = (*redisProvider)(nil)
 
-func NewRedisProvider(app *foundation.Application) foundation.Provider {
+func NewRedisProvider(c *container.Container) container.Provider {
 	return &redisProvider{
-		app: app,
+		container: c,
 	}
 }
 
 func (r *redisProvider) Register() {
-	r.app.Singleton("redis", func(app *foundation.Application) interface{} {
-		return NewManager(app)
+	r.container.Singleton("redis", func(c *container.Container) interface{} {
+		return NewManager(c)
 	})
 }

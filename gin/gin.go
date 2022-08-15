@@ -2,9 +2,9 @@ package gin
 
 import (
 	g "github.com/gin-gonic/gin"
-	"github.com/go-packagist/framework/foundation"
+	"github.com/go-packagist/framework/container"
 )
 
-func NewGin(app *foundation.Application) *g.Engine {
+func NewGin(c *container.Container) *g.Engine {
 	return g.Default()
 }

@@ -1,4 +1,4 @@
-package foundation
+package container
 
 type Provider interface {
 	Register()

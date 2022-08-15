@@ -2,23 +2,23 @@ package database
 
 import (
 	"github.com/go-packagist/framework/config"
-	"github.com/go-packagist/framework/foundation"
+	"github.com/go-packagist/framework/container"
 )
 
 type databaseProvider struct {
-	app *foundation.Application
+	container *container.Container
 }
 
-var _ foundation.Provider = (*databaseProvider)(nil)
+var _ container.Provider = (*databaseProvider)(nil)
 
-func NewDatabaseProvider(app *foundation.Application) foundation.Provider {
+func NewDatabaseProvider(c *container.Container) container.Provider {
 	return &databaseProvider{
-		app: app,
+		container: c,
 	}
 }
 
 func (p *databaseProvider) Register() {
-	p.app.Singleton("database", func(app *foundation.Application) interface{} {
-		return NewManager(app.MustMake("config").(*config.Config).Get("database").(*Config))
+	p.container.Singleton("database", func(c *container.Container) interface{} {
+		return NewManager(c.MustMake("config").(*config.Config).Get("database").(*Config))
 	})
 }

@@ -2,15 +2,13 @@ package foundation
 
 import (
 	"github.com/go-packagist/framework/container"
-	"reflect"
 	"strings"
 )
 
 // Application is the main application object.
 type Application struct {
 	basePath  string
-	providers []Provider
-	container *container.Container
+	Container *container.Container
 }
 
 // VERSION is the current version of the application.
@@ -21,9 +19,11 @@ var instance *Application
 // NewApplication creates a new application instance
 func NewApplication(basePath string) *Application {
 	app := &Application{
-		providers: []Provider{},
-		container: container.NewContainer(),
+		Container: container.NewContainer(),
 	}
+
+	// 注入容器
+	app.Container.Instance("app", app)
 
 	// 设置basePath
 	app.setBasePath(basePath)
@@ -50,58 +50,26 @@ func App() *Application {
 	return GetInstance()
 }
 
-// Register registers a provider with the application.
-func (app *Application) Register(provider Provider) {
-	if app.providerIsRegistered(provider) {
-		return
-	}
-
-	provider.Register()
-
-	app.providerMarkAsRegistered(provider)
-
-	// todo
-	// 1. bind
-	// 2. boot
-}
-
-// providerIsRegistered return provider is registered
-func (app *Application) providerIsRegistered(provider Provider) bool {
-	for _, providerRegistered := range app.providers {
-		if reflect.DeepEqual(providerRegistered, provider) {
-			return true
-		}
-	}
-
-	return false
-}
-
-// providerMarkAsRegistered provider mark as registered.
-func (app *Application) providerMarkAsRegistered(provider Provider) {
-	app.providers = append(app.providers, provider)
-}
-
-// GetProviders returns all registered providers.
-func (app *Application) GetProviders() []Provider {
-	return app.providers
+func (app *Application) Register(provider container.Provider) {
+	app.Container.Register(provider)
 }
 
 func (app *Application) Instance(abstract string, concrete interface{}) {
-	app.container.Instance(abstract, concrete)
+	app.Container.Instance(abstract, concrete)
 }
 
 // Singleton Register a shared binding in the container.
 func (app *Application) Singleton(abstract string, concrete container.ConcreteFunc) {
-	app.container.Singleton(abstract, concrete)
+	app.Container.Singleton(abstract, concrete)
 }
 
 func (app *Application) Bind(abstract string, concrete container.ConcreteFunc, shared bool) {
-	app.container.Bind(abstract, concrete, shared)
+	app.Container.Bind(abstract, concrete, shared)
 }
 
 // Make Resolve the given type from the container.
 func (app *Application) Make(abstract string) (interface{}, error) {
-	return app.container.Make(abstract)
+	return app.Container.Make(abstract)
 }
 
 // MustMake Resolve the given type from the container or panic.
@@ -120,10 +88,10 @@ func (app *Application) setBasePath(basePath string) {
 
 // bindPathInApplication bind path in application
 func (app *Application) bindPathInApplication() {
-	app.container.Instance("path", app.getPath())
-	app.container.Instance("path.base", app.getBasePath())
-	app.container.Instance("path.config", app.getConfigPath())
-	app.container.Instance("path.bootstrap", app.getBootstrapPath())
+	app.Container.Instance("path", app.getPath())
+	app.Container.Instance("path.base", app.getBasePath())
+	app.Container.Instance("path.config", app.getConfigPath())
+	app.Container.Instance("path.bootstrap", app.getBootstrapPath())
 }
 
 // getPath returns the app path to the base of the application.

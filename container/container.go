@@ -3,6 +3,7 @@ package container
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"sync"
 )
 
@@ -15,6 +16,7 @@ type binding struct {
 }
 
 type Container struct {
+	providers []Provider
 	bindings  map[string]binding
 	instances map[string]interface{}
 
@@ -23,12 +25,49 @@ type Container struct {
 
 func NewContainer() *Container {
 	c := &Container{
+		providers: []Provider{},
 		bindings:  make(map[string]binding),
 		instances: make(map[string]interface{}),
 		rwlock:    &sync.RWMutex{},
 	}
 
 	return c
+}
+
+// Register registers a provider with the application.
+func (c *Container) Register(provider Provider) {
+	if c.providerIsRegistered(provider) {
+		return
+	}
+
+	provider.Register()
+
+	c.providerMarkAsRegistered(provider)
+
+	// todo
+	// 1. bind
+	// 2. boot
+}
+
+// providerIsRegistered return provider is registered
+func (c *Container) providerIsRegistered(provider Provider) bool {
+	for _, providerRegistered := range c.providers {
+		if reflect.DeepEqual(providerRegistered, provider) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// providerMarkAsRegistered provider mark as registered.
+func (c *Container) providerMarkAsRegistered(provider Provider) {
+	c.providers = append(c.providers, provider)
+}
+
+// GetProviders returns all registered providers.
+func (c *Container) GetProviders() []Provider {
+	return c.providers
 }
 
 // Singleton Register a shared binding in the container.

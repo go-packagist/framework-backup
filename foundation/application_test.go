@@ -1,6 +1,7 @@
 package foundation
 
 import (
+	"github.com/go-packagist/framework/container"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -17,18 +18,18 @@ func TestApplication_Version(t *testing.T) {
 func TestApplication_Register(t *testing.T) {
 	app := NewApplication("./")
 
-	app.Register(NewTestProvider(app))
-	app.Register(NewTestProvider(app)) // 验证重复导入
+	app.Register(NewTestProvider(app.Container))
+	app.Register(NewTestProvider(app.Container)) // 验证重复导入
 
-	assert.Equal(t, []Provider{
-		NewTestProvider(app),
-	}, app.GetProviders())
+	assert.Equal(t, []container.Provider{
+		NewTestProvider(app.Container),
+	}, app.Container.GetProviders())
 }
 
 func TestApplication_Bind(t *testing.T) {
 	app := NewApplication("./")
 
-	app.Register(NewTestProvider(app))
+	app.Register(NewTestProvider(app.Container))
 
 	// 测试容器的单例（Singleton）效果
 	testService := app.MustMake("test").(*TestService)
@@ -57,7 +58,7 @@ func TestApplication_Bind(t *testing.T) {
 func TestApplication_AppInstance(t *testing.T) {
 	app := NewApplication("./")
 
-	app.Register(NewTestProvider(app))
+	app.Register(NewTestProvider(app.Container))
 
 	// GetInstance
 	GetInstance().MustMake("test").(*TestService).WriteContent("aaa")
@@ -98,4 +99,53 @@ func TestApplication_Instance(t *testing.T) {
 		return "func"
 	})
 	assert.Equal(t, "func", app.MustMake("func").(func() string)())
+}
+
+type TestProvider struct {
+	container *container.Container
+}
+
+var _ container.Provider = (*TestProvider)(nil)
+
+func NewTestProvider(c *container.Container) container.Provider {
+	return &TestProvider{
+		container: c,
+	}
+}
+
+func (p *TestProvider) Register() {
+	p.container.Singleton("test", func(c *container.Container) interface{} {
+		return NewTestService(c)
+	})
+
+	p.container.Bind("test2", func(c *container.Container) interface{} {
+		return NewTestService(c)
+	}, false)
+}
+
+// TestService is a test service
+type TestService struct {
+	c       *container.Container
+	content string
+}
+
+func NewTestService(c *container.Container) *TestService {
+	return &TestService{
+		c:       c,
+		content: "",
+	}
+}
+
+func (s *TestService) Container() *container.Container {
+	return s.c
+}
+
+func (s *TestService) WriteContent(content string) *TestService {
+	s.content = content
+
+	return s
+}
+
+func (s *TestService) ReadContent() string {
+	return s.content
 }
