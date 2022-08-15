@@ -1,5 +1,7 @@
 package foundation
 
+import "github.com/go-packagist/framework/container"
+
 type TestProvider struct {
 	app *Application
 }
@@ -13,30 +15,30 @@ func NewTestProvider(app *Application) Provider {
 }
 
 func (p *TestProvider) Register() {
-	p.app.Singleton("test", func(app *Application) interface{} {
-		return NewTestService(app)
+	p.app.Singleton("test", func(c *container.Container) interface{} {
+		return NewTestService(c)
 	})
 
-	p.app.Bind("test2", func(app *Application) interface{} {
-		return NewTestService(app)
+	p.app.Bind("test2", func(c *container.Container) interface{} {
+		return NewTestService(c)
 	}, false)
 }
 
 // TestService is a test service
 type TestService struct {
-	app     *Application
+	c       *container.Container
 	content string
 }
 
-func NewTestService(app *Application) *TestService {
+func NewTestService(c *container.Container) *TestService {
 	return &TestService{
-		app:     app,
+		c:       c,
 		content: "",
 	}
 }
 
-func (s *TestService) Application() *Application {
-	return s.app
+func (s *TestService) Container() *container.Container {
+	return s.c
 }
 
 func (s *TestService) WriteContent(content string) *TestService {
