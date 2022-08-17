@@ -21,7 +21,7 @@ func createRedisConnection() Connection {
 			"redis": map[string]interface{}{
 				"driver":   "redis",
 				"host":     "localhost",
-				"port":     63790,
+				"port":     6379,
 				"password": "",
 				"database": 0,
 			},
