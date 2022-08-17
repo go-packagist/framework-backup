@@ -10,7 +10,7 @@ set -e
 set -x
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
+BASEPATH=$(cd `dirname $0`; cd ../; pwd)
 REPOS=$@
 
 function split()
@@ -33,5 +33,5 @@ fi
 for REPO in $REPOS ; do
     remote $REPO git@github.com:go-packagist/$REPO.git
 
-    split "src/$REPO" $REPO
+    split "$REPO" $REPO
 done
