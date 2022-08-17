@@ -1,30 +1,14 @@
 package foundation
 
 import (
-	"errors"
-	"fmt"
-	"reflect"
+	"github.com/go-packagist/framework/container"
 	"strings"
-	"sync"
 )
-
-type ConcreteFunc func(*Application) interface{}
-
-type binding struct {
-	abstract string
-	concrete ConcreteFunc
-	shared   bool
-}
 
 // Application is the main application object.
 type Application struct {
 	basePath  string
-	providers []Provider
-
-	bindings  map[string]binding
-	instances map[string]interface{}
-
-	rwlock *sync.RWMutex
+	Container *container.Container
 }
 
 // VERSION is the current version of the application.
@@ -35,11 +19,11 @@ var instance *Application
 // NewApplication creates a new application instance
 func NewApplication(basePath string) *Application {
 	app := &Application{
-		providers: []Provider{},
-		bindings:  make(map[string]binding),
-		instances: make(map[string]interface{}),
-		rwlock:    &sync.RWMutex{},
+		Container: container.NewContainer(),
 	}
+
+	// 注入容器
+	app.Container.Instance("app", app)
 
 	// 设置basePath
 	app.setBasePath(basePath)
@@ -66,69 +50,26 @@ func App() *Application {
 	return GetInstance()
 }
 
-// Register registers a provider with the application.
-func (app *Application) Register(provider Provider) {
-	if app.providerIsRegistered(provider) {
-		return
-	}
-
-	provider.Register()
-
-	app.providerMarkAsRegistered(provider)
-
-	// todo
-	// 1. bind
-	// 2. boot
-}
-
-// providerIsRegistered return provider is registered
-func (app *Application) providerIsRegistered(provider Provider) bool {
-	for _, providerRegistered := range app.providers {
-		if reflect.DeepEqual(providerRegistered, provider) {
-			return true
-		}
-	}
-
-	return false
-}
-
-// providerMarkAsRegistered provider mark as registered.
-func (app *Application) providerMarkAsRegistered(provider Provider) {
-	app.providers = append(app.providers, provider)
-}
-
-// GetProviders returns all registered providers.
-func (app *Application) GetProviders() []Provider {
-	return app.providers
-}
-
-// Singleton Register a shared binding in the container.
-func (app *Application) Singleton(abstract string, concrete ConcreteFunc) {
-	app.Bind(abstract, concrete, true)
-}
-
-// Bind Register a binding with the container.
-func (app *Application) Bind(abstract string, concrete ConcreteFunc, shared bool) {
-	app.rwlock.Lock()
-	defer app.rwlock.Unlock()
-
-	app.bindings[abstract] = binding{
-		abstract: abstract,
-		concrete: concrete,
-		shared:   shared,
-	}
+func (app *Application) Register(provider container.Provider) {
+	app.Container.Register(provider)
 }
 
 func (app *Application) Instance(abstract string, concrete interface{}) {
-	app.rwlock.Lock()
-	defer app.rwlock.Unlock()
+	app.Container.Instance(abstract, concrete)
+}
 
-	app.instances[abstract] = concrete
+// Singleton Register a shared binding in the container.
+func (app *Application) Singleton(abstract string, concrete container.ConcreteFunc) {
+	app.Container.Singleton(abstract, concrete)
+}
+
+func (app *Application) Bind(abstract string, concrete container.ConcreteFunc, shared bool) {
+	app.Container.Bind(abstract, concrete, shared)
 }
 
 // Make Resolve the given type from the container.
 func (app *Application) Make(abstract string) (interface{}, error) {
-	return app.Resolve(abstract)
+	return app.Container.Make(abstract)
 }
 
 // MustMake Resolve the given type from the container or panic.
@@ -136,35 +77,6 @@ func (app *Application) MustMake(abstract string) interface{} {
 	concrete, _ := app.Make(abstract)
 
 	return concrete
-}
-
-// Resolve the given type from the container.
-func (app *Application) Resolve(abstract string) (interface{}, error) {
-	// instance
-	instance, ok := app.instances[abstract]
-	if ok {
-		return instance, nil
-	}
-
-	// binding
-	binding, ok2 := app.bindings[abstract]
-	if !ok2 {
-		return nil, errors.New(fmt.Sprintf("[%s] binding not found", abstract))
-	}
-
-	// concrete(app)
-	concrete := binding.concrete(app)
-
-	if app.isShared(abstract) {
-		app.Instance(abstract, concrete)
-	}
-
-	return concrete, nil
-}
-
-// isShared Determine if a given type is shared.
-func (app *Application) isShared(abstract string) bool {
-	return app.bindings[abstract].shared
 }
 
 // SetBasePath sets the base path for the application.
@@ -176,10 +88,10 @@ func (app *Application) setBasePath(basePath string) {
 
 // bindPathInApplication bind path in application
 func (app *Application) bindPathInApplication() {
-	app.Instance("path", app.getPath())
-	app.Instance("path.base", app.getBasePath())
-	app.Instance("path.config", app.getConfigPath())
-	app.Instance("path.bootstrap", app.getBootstrapPath())
+	app.Container.Instance("path", app.getPath())
+	app.Container.Instance("path.base", app.getBasePath())
+	app.Container.Instance("path.config", app.getConfigPath())
+	app.Container.Instance("path.bootstrap", app.getBootstrapPath())
 }
 
 // getPath returns the app path to the base of the application.

@@ -1,19 +1,21 @@
 package config
 
-import "github.com/go-packagist/framework/foundation"
+import (
+	"github.com/go-packagist/framework/container"
+)
 
 type Provider struct {
-	app *foundation.Application
+	container *container.Container
 }
 
-var _ foundation.Provider = (*Provider)(nil)
+var _ container.Provider = (*Provider)(nil)
 
-func NewConfigProvider(app *foundation.Application) foundation.Provider {
+func NewConfigProvider(c *container.Container) container.Provider {
 	return &Provider{
-		app: app,
+		container: c,
 	}
 }
 
 func (p *Provider) Register() {
-	p.app.Instance("config", New(&Options{}))
+	p.container.Instance("config", New(&Options{}))
 }

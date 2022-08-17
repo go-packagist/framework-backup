@@ -12,7 +12,7 @@ func createRedisConnection() Connection {
 	app := foundation.NewApplication("./")
 
 	// Register Config
-	app.Register(config.NewConfigProvider(app))
+	app.Register(config.NewConfigProvider(app.Container))
 
 	// Configure Redis Connection
 	app.MustMake("config").(*config.Config).Add("redis", map[string]interface{}{
@@ -21,7 +21,7 @@ func createRedisConnection() Connection {
 			"redis": map[string]interface{}{
 				"driver":   "redis",
 				"host":     "localhost",
-				"port":     6379,
+				"port":     63790,
 				"password": "",
 				"database": 0,
 			},

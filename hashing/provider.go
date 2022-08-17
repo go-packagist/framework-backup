@@ -2,34 +2,34 @@ package hashing
 
 import (
 	"github.com/go-packagist/framework/config"
-	"github.com/go-packagist/framework/foundation"
+	"github.com/go-packagist/framework/container"
 )
 
 // hashProvider represents the hashing provider.
 type hashProvider struct {
-	app *foundation.Application
+	container *container.Container
 }
 
-var _ foundation.Provider = (*hashProvider)(nil)
+var _ container.Provider = (*hashProvider)(nil)
 
 // NewHashProvider Bootstrap bootstraps the hashing services.
-func NewHashProvider(app *foundation.Application) *hashProvider {
+func NewHashProvider(c *container.Container) *hashProvider {
 	return &hashProvider{
-		app: app,
+		container: c,
 	}
 }
 
 // Register registers the hashing services into the application.
 func (p *hashProvider) Register() {
-	p.app.Singleton("hash", func(app *foundation.Application) interface{} {
-		return NewManager(app.MustMake("config").(*config.Config).Get("hashing").(*Config))
+	p.container.Singleton("hash", func(c *container.Container) interface{} {
+		return NewManager(c.MustMake("config").(*config.Config).Get("hashing").(*Config))
 	})
 
-	p.app.Singleton("hasher.bcrypt", func(app *foundation.Application) interface{} {
+	p.container.Singleton("hasher.bcrypt", func(c *container.Container) interface{} {
 		return NewBcryptHasher()
 	})
 
-	p.app.Singleton("hasher.md5", func(app *foundation.Application) interface{} {
+	p.container.Singleton("hasher.md5", func(c *container.Container) interface{} {
 		return NewMd5Hasher()
 	})
 }

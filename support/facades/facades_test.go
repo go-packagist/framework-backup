@@ -11,7 +11,7 @@ import (
 func createApp() *foundation.Application {
 	app := foundation.NewApplication("./")
 
-	app.Register(config.NewConfigProvider(app))
+	app.Register(config.NewConfigProvider(app.Container))
 
 	// set config-hasing
 	app.MustMake("config").(*config.Config).Set("hashing", &hashing.Config{
@@ -35,7 +35,7 @@ func TestFacades_Config(t *testing.T) {
 
 func TestFacades_Hashing(t *testing.T) {
 	app := createApp()
-	app.Register(hashing.NewHashProvider(app))
+	app.Register(hashing.NewHashProvider(app.Container))
 
 	value := "123456"
 

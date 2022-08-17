@@ -10,7 +10,7 @@ import (
 func TestProvider(t *testing.T) {
 	app := createApp()
 
-	app.Register(NewHashProvider(app))
+	app.Register(NewHashProvider(app.Container))
 
 	// hash
 	value := "123456"
@@ -29,7 +29,7 @@ func TestProvider(t *testing.T) {
 func createApp() *foundation.Application {
 	app := foundation.NewApplication("./")
 
-	app.Register(config.NewConfigProvider(app))
+	app.Register(config.NewConfigProvider(app.Container))
 
 	// set config
 	app.MustMake("config").(*config.Config).Set("hashing", &Config{

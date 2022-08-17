@@ -18,7 +18,7 @@ func TestConfig_New(t *testing.T) {
 func TestConfig_ServiceProvider(t *testing.T) {
 	app := foundation.NewApplication("./")
 
-	app.Register(NewConfigProvider(app))
+	app.Register(NewConfigProvider(app.Container))
 
 	config, err := app.Make("config")
 	facade := config.(*Config)
@@ -32,7 +32,7 @@ func TestConfig_ServiceProvider(t *testing.T) {
 func TestConfig_Add(t *testing.T) {
 	app := foundation.NewApplication("./")
 
-	app.Register(NewConfigProvider(app))
+	app.Register(NewConfigProvider(app.Container))
 
 	config := app.MustMake("config").(*Config)
 
