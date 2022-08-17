@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestFacade(t *testing.T) {
+func TestFacade_App(t *testing.T) {
 	foundation.NewApplication("./")
 
 	// assert.Equal(t, "./app", App().getPath())
