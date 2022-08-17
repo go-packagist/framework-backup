@@ -26,9 +26,6 @@ jobs:
           - 6379:6379
 
     steps:
-      - name: Setup Services
-        run: |
-          docker run --name redis -p 6379:6379 -d redis
       - name: Install Go
         uses: actions/setup-go@v2
         with:
