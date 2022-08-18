@@ -33,3 +33,7 @@ func (p *hashProvider) Register() {
 		return NewMd5Hasher()
 	})
 }
+
+func (p *hashProvider) Boot() {
+
+}

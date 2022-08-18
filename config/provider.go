@@ -4,18 +4,28 @@ import (
 	"github.com/go-packagist/framework/container"
 )
 
-type Provider struct {
+type configProvider struct {
 	container *container.Container
 }
 
-var _ container.Provider = (*Provider)(nil)
+var _ container.Provider = (*configProvider)(nil)
 
 func NewConfigProvider(c *container.Container) container.Provider {
-	return &Provider{
+	return &configProvider{
 		container: c,
 	}
 }
 
-func (p *Provider) Register() {
-	p.container.Instance("config", New(&Options{}))
+func (p *configProvider) Register() {
+	options := &Options{}
+
+	if basePath, err := p.container.Get("path.base"); err == nil {
+		options.EnvPath = basePath.(string)
+	}
+
+	p.container.Instance("config", New(options))
+}
+
+func (p *configProvider) Boot() {
+
 }

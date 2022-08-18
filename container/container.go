@@ -20,7 +20,7 @@ type Container struct {
 	bindings  map[string]binding
 	instances map[string]interface{}
 
-	rwlock *sync.RWMutex
+	locker *sync.RWMutex
 }
 
 func NewContainer() *Container {
@@ -28,7 +28,7 @@ func NewContainer() *Container {
 		providers: []Provider{},
 		bindings:  make(map[string]binding),
 		instances: make(map[string]interface{}),
-		rwlock:    &sync.RWMutex{},
+		locker:    &sync.RWMutex{},
 	}
 
 	return c
@@ -77,8 +77,8 @@ func (c *Container) Singleton(abstract string, concrete ConcreteFunc) {
 
 // Bind Register a binding with the container.
 func (c *Container) Bind(abstract string, concrete ConcreteFunc, shared bool) {
-	c.rwlock.Lock()
-	defer c.rwlock.Unlock()
+	c.locker.Lock()
+	defer c.locker.Unlock()
 
 	c.bindings[abstract] = binding{
 		abstract: abstract,
@@ -89,10 +89,15 @@ func (c *Container) Bind(abstract string, concrete ConcreteFunc, shared bool) {
 
 // Instance Set the given type to the container.
 func (c *Container) Instance(abstract string, concrete interface{}) {
-	c.rwlock.Lock()
-	defer c.rwlock.Unlock()
+	c.locker.Lock()
+	defer c.locker.Unlock()
 
 	c.instances[abstract] = concrete
+}
+
+// Get returns the instance of the given type from the container.
+func (c *Container) Get(abstract string) (interface{}, error) {
+	return c.Resolve(abstract)
 }
 
 // Make Resolve the given type from the container.
@@ -102,7 +107,11 @@ func (c *Container) Make(abstract string) (interface{}, error) {
 
 // MustMake Resolve the given type from the container or panic.
 func (c *Container) MustMake(abstract string) interface{} {
-	concrete, _ := c.Make(abstract)
+	concrete, err := c.Make(abstract)
+
+	if err != nil {
+		panic(err)
+	}
 
 	return concrete
 }

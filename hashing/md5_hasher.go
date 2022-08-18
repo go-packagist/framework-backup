@@ -24,7 +24,11 @@ func (m *Md5Hasher) Make(value string) (string, error) {
 
 // MustMake generates a new hashed value.
 func (m *Md5Hasher) MustMake(value string) string {
-	hashedValue, _ := m.Make(value)
+	hashedValue, err := m.Make(value)
+
+	if err != nil {
+		panic(err)
+	}
 
 	return hashedValue
 }

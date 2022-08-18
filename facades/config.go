@@ -23,7 +23,11 @@ func Config() (*config.Config, error) {
 
 // MustConfig returns the config facade.
 func MustConfig() *config.Config {
-	cfg, _ := Config()
+	cfg, err := Config()
+
+	if err != nil {
+		panic(err)
+	}
 
 	return cfg
 }

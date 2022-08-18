@@ -22,7 +22,11 @@ func Hash() (*hashing.Manager, error) {
 
 // MustHash returns the hashing manager.
 func MustHash() *hashing.Manager {
-	hash, _ := Hash()
+	hash, err := Hash()
+
+	if err != nil {
+		panic(err)
+	}
 
 	return hash
 }

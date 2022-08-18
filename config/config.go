@@ -94,6 +94,12 @@ func (o *Options) GetEnvPath() string {
 	return o.EnvPath
 }
 
+func (o *Options) SetPrefix(prefix string) *Options {
+	o.Prefix = prefix
+
+	return o
+}
+
 // GetPrefix returns the prefix.
 func (o *Options) GetPrefix() string {
 	return o.Prefix
