@@ -44,7 +44,11 @@ func BcryptHasher() (*hashing.BcryptHasher, error) {
 
 // MustBcryptHasher returns the bcrypt hasher.
 func MustBcryptHasher() *hashing.BcryptHasher {
-	hash, _ := BcryptHasher()
+	hash, err := BcryptHasher()
+
+	if err != nil {
+		panic(err)
+	}
 
 	return hash
 }
@@ -66,7 +70,11 @@ func Md5Hasher() (*hashing.Md5Hasher, error) {
 
 // MustMd5Hasher returns the md5 hasher.
 func MustMd5Hasher() *hashing.Md5Hasher {
-	hash, _ := Md5Hasher()
+	hash, err := Md5Hasher()
+
+	if err != nil {
+		panic(err)
+	}
 
 	return hash
 }

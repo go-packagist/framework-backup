@@ -1,18 +1,18 @@
 package redis
 
-import (
-	"github.com/go-packagist/framework/config"
-	"github.com/go-packagist/framework/container"
-)
-
 type Manager struct {
-	container   *container.Container
+	config      *Config
 	connections map[string]Connection
 }
 
-func NewManager(c *container.Container) *Manager {
+type Config struct {
+	Default     string
+	Connections map[string]map[string]interface{}
+}
+
+func NewManager(c *Config) *Manager {
 	return &Manager{
-		container:   c,
+		config:      c,
 		connections: make(map[string]Connection),
 	}
 }
@@ -32,8 +32,7 @@ func (m *Manager) Connection(name ...string) Connection {
 }
 
 func (m *Manager) resolve(name string) Connection {
-	cfg := m.container.MustMake("config").(*config.Config).
-		Get("redis.connections." + name).(map[string]interface{})
+	cfg := m.config.Connections[name]
 
 	if cfg == nil {
 		panic("redis connection not found: " + name)
@@ -57,5 +56,5 @@ func (m *Manager) createRedisConnection(config map[string]interface{}) Connectio
 }
 
 func (m *Manager) getDefaultName() string {
-	return m.container.MustMake("config").(*config.Config).Get("redis.default").(string)
+	return m.config.Default
 }
