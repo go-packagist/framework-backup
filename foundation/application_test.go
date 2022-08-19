@@ -123,6 +123,10 @@ func (p *TestProvider) Register() {
 	}, false)
 }
 
+func (p *TestProvider) Boot() {
+
+}
+
 // TestService is a test service
 type TestService struct {
 	c       *container.Container
