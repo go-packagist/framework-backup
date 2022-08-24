@@ -2,6 +2,8 @@
 
 _——The idea came from [Laravel](https://github.com/laravel)_
 
+[![codecov](https://codecov.io/gh/go-packagist/framework/branch/master/graph/badge.svg?token=5TWGQ9DIRU)](https://codecov.io/gh/go-packagist/framework)
+
 ## Roadmap
 
 See [Roadmap](roadmap.md).
