@@ -1,7 +1,7 @@
 name: Go Test
 on:
   push:
-    branches: [ master ]
+    branches: [ master, feature/* ]
   pull_request:
     branches: [ master ]
 env:
@@ -34,3 +34,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Run tests
         run: go test ./... -v -covermode=atomic
+      - name: Upload coverage reports to Codecov
+        run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov -t ${CODECOV_TOKEN}
