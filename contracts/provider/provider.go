@@ -1,4 +1,4 @@
-package container
+package provider
 
 type Provider interface {
 	// Register registers the services into the application.

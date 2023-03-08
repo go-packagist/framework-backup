@@ -6,7 +6,7 @@ import (
 )
 
 func TestContainer(t *testing.T) {
-	c := NewContainer()
+	c := New()
 
 	c.Instance("test", "test")
 	assert.Equal(t, "test", c.MustMake("test").(string))

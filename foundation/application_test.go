@@ -2,6 +2,8 @@ package foundation
 
 import (
 	"github.com/go-packagist/framework/container"
+	"github.com/go-packagist/framework/contracts/provider"
+	"github.com/go-packagist/framework/version"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -10,24 +12,24 @@ func TestApplication(t *testing.T) {
 }
 
 func TestApplication_Version(t *testing.T) {
-	app := NewApplication("./")
+	app := NewApplication()
 
-	assert.Equal(t, VERSION, app.Version())
+	assert.Equal(t, version.Version, app.Version())
 }
 
 func TestApplication_Register(t *testing.T) {
-	app := NewApplication("./")
+	app := NewApplication()
 
 	app.Register(NewTestProvider(app.Container))
 	app.Register(NewTestProvider(app.Container)) // 验证重复导入
 
-	assert.Equal(t, []container.Provider{
+	assert.Equal(t, []provider.Provider{
 		NewTestProvider(app.Container),
 	}, app.Container.GetProviders())
 }
 
 func TestApplication_Bind(t *testing.T) {
-	app := NewApplication("./")
+	app := NewApplication()
 
 	app.Register(NewTestProvider(app.Container))
 
@@ -56,7 +58,7 @@ func TestApplication_Bind(t *testing.T) {
 }
 
 func TestApplication_AppInstance(t *testing.T) {
-	app := NewApplication("./")
+	app := NewApplication()
 
 	app.Register(NewTestProvider(app.Container))
 
@@ -74,7 +76,7 @@ func TestApplication_AppInstance(t *testing.T) {
 }
 
 func TestApplication_Instance(t *testing.T) {
-	app := NewApplication("./")
+	app := NewApplication()
 
 	// map[string]string
 	app.Instance("config", map[string]string{
@@ -105,9 +107,9 @@ type TestProvider struct {
 	container *container.Container
 }
 
-var _ container.Provider = (*TestProvider)(nil)
+var _ provider.Provider = (*TestProvider)(nil)
 
-func NewTestProvider(c *container.Container) container.Provider {
+func NewTestProvider(c *container.Container) provider.Provider {
 	return &TestProvider{
 		container: c,
 	}

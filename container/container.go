@@ -3,6 +3,7 @@ package container
 import (
 	"errors"
 	"fmt"
+	"github.com/go-packagist/framework/contracts/provider"
 	"reflect"
 	"sync"
 )
@@ -16,26 +17,26 @@ type binding struct {
 }
 
 type Container struct {
-	providers []Provider
+	providers []provider.Provider
 	bindings  map[string]binding
 	instances map[string]interface{}
 
-	locker *sync.RWMutex
+	rw *sync.RWMutex
 }
 
-func NewContainer() *Container {
+func New() *Container {
 	c := &Container{
-		providers: []Provider{},
+		providers: []provider.Provider{},
 		bindings:  make(map[string]binding),
 		instances: make(map[string]interface{}),
-		locker:    &sync.RWMutex{},
+		rw:        &sync.RWMutex{},
 	}
 
 	return c
 }
 
 // Register registers a provider with the application.
-func (c *Container) Register(provider Provider) {
+func (c *Container) Register(provider provider.Provider) {
 	if c.providerIsRegistered(provider) {
 		return
 	}
@@ -50,7 +51,7 @@ func (c *Container) Register(provider Provider) {
 }
 
 // providerIsRegistered return provider is registered
-func (c *Container) providerIsRegistered(provider Provider) bool {
+func (c *Container) providerIsRegistered(provider provider.Provider) bool {
 	for _, providerRegistered := range c.providers {
 		if reflect.DeepEqual(providerRegistered, provider) {
 			return true
@@ -61,12 +62,12 @@ func (c *Container) providerIsRegistered(provider Provider) bool {
 }
 
 // providerMarkAsRegistered provider mark as registered.
-func (c *Container) providerMarkAsRegistered(provider Provider) {
+func (c *Container) providerMarkAsRegistered(provider provider.Provider) {
 	c.providers = append(c.providers, provider)
 }
 
 // GetProviders returns all registered providers.
-func (c *Container) GetProviders() []Provider {
+func (c *Container) GetProviders() []provider.Provider {
 	return c.providers
 }
 
@@ -77,8 +78,8 @@ func (c *Container) Singleton(abstract string, concrete ConcreteFunc) {
 
 // Bind Register a binding with the container.
 func (c *Container) Bind(abstract string, concrete ConcreteFunc, shared bool) {
-	c.locker.Lock()
-	defer c.locker.Unlock()
+	c.rw.Lock()
+	defer c.rw.Unlock()
 
 	c.bindings[abstract] = binding{
 		abstract: abstract,
@@ -89,20 +90,20 @@ func (c *Container) Bind(abstract string, concrete ConcreteFunc, shared bool) {
 
 // Instance Set the given type to the container.
 func (c *Container) Instance(abstract string, concrete interface{}) {
-	c.locker.Lock()
-	defer c.locker.Unlock()
+	c.rw.Lock()
+	defer c.rw.Unlock()
 
 	c.instances[abstract] = concrete
 }
 
 // Get returns the instance of the given type from the container.
 func (c *Container) Get(abstract string) (interface{}, error) {
-	return c.Resolve(abstract)
+	return c.resolve(abstract)
 }
 
-// Make Resolve the given type from the container.
+// Make resolve the given type from the container.
 func (c *Container) Make(abstract string) (interface{}, error) {
-	return c.Resolve(abstract)
+	return c.resolve(abstract)
 }
 
 // MustMake Resolve the given type from the container or panic.
@@ -117,7 +118,7 @@ func (c *Container) MustMake(abstract string) interface{} {
 }
 
 // Resolve the given type from the container.
-func (c *Container) Resolve(abstract string) (interface{}, error) {
+func (c *Container) resolve(abstract string) (interface{}, error) {
 	// instance
 	instance, ok := c.instances[abstract]
 	if ok {
