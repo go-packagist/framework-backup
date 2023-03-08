@@ -3,7 +3,7 @@ on:
   push:
     branches: [ master, feature/* ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, feature/* ]
 env:
   GOPROXY: "https://proxy.golang.org"
 
