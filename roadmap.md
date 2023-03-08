@@ -1,5 +1,12 @@
 # Roadmap
 
+**v0.5.x**
+
+- [x] container
+- [x] hashing
+- [x] foundation
+- [x] facades
+
 **v1.0.x**
 
 - [ ] container
