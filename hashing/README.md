@@ -7,6 +7,12 @@
 
 _——The idea came from [Laravel](https://github.com/laravel)_
 
+## Installation
+
+```bash
+go get github.com/go-packagist/framework/hashing
+```
+
 ## Usage
 
 ```go

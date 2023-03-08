@@ -1,7 +1,6 @@
 package hashing
 
 import (
-	"github.com/go-packagist/framework/config"
 	"github.com/go-packagist/framework/foundation"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -12,29 +11,22 @@ func TestProvider(t *testing.T) {
 
 	app.Register(NewHashProvider(app.Container))
 
-	// hash
+	manager := app.MustMake("hash").(*Manager)
 	value := "123456"
-	hashedValue := app.MustMake("hash").(*Manager).Driver().MustMake(value)
-	assert.True(t, app.MustMake("hash").(*Manager).Driver().Check(value, hashedValue))
 
-	// hasher.bcrypt
-	hashedValue2 := app.MustMake("hasher.bcrypt").(*BcryptHasher).MustMake(value)
-	assert.True(t, app.MustMake("hasher.bcrypt").(*BcryptHasher).Check(value, hashedValue2))
+	// hash(default:md5)
+	hashedValue := manager.Driver().MustMake(value)
+	assert.True(t, manager.Driver().Check(value, hashedValue))
 
-	// hasher.md5
-	hashedValue3 := app.MustMake("hasher.md5").(*Md5Hasher).MustMake(value)
-	assert.True(t, app.MustMake("hasher.md5").(*Md5Hasher).Check(value, hashedValue3))
+	// hash bcrypt
+	hashedValue2 := manager.Driver("bcrypt").MustMake(value)
+	assert.True(t, manager.Driver("bcrypt").Check(value, hashedValue2))
+
+	// hash md5
+	hashedValue3 := manager.Driver("md5").MustMake(value)
+	assert.True(t, manager.Driver("md5").Check(value, hashedValue3))
 }
 
 func createApp() *foundation.Application {
-	app := foundation.NewApplication("./")
-
-	app.Register(config.NewConfigProvider(app.Container))
-
-	// set config
-	app.MustMake("config").(*config.Config).Set("hashing", &Config{
-		Driver: "bcrypt",
-	})
-
-	return app
+	return foundation.NewApplication()
 }
