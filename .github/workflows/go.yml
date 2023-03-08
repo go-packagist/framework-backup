@@ -33,7 +33,7 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
-        run: go version
+      - run: go version
 
       - name: Run tests
         run: go test ./... -v -covermode=atomic -race -coverprofile=coverage.txt
