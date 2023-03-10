@@ -44,10 +44,6 @@ func (c *Container) Register(provider provider.Provider) {
 	provider.Register()
 
 	c.providerMarkAsRegistered(provider)
-
-	// todo
-	// 1. bind
-	// 2. boot
 }
 
 // providerIsRegistered return provider is registered
