@@ -30,9 +30,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
+          cache-dependency-path: ./go.sum
       - run: go version
 
       - name: Run tests
