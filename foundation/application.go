@@ -8,6 +8,7 @@ import (
 // Application is the main application object.
 type Application struct {
 	*container.Container
+	booted bool
 }
 
 // Application is the main application object.
@@ -17,6 +18,7 @@ var instance *Application
 func NewApplication() *Application {
 	app := &Application{
 		Container: container.New(),
+		booted:    false,
 	}
 
 	// register the application instance
@@ -46,6 +48,19 @@ func Instance() *Application {
 // App returns the application instance.
 func App() *Application {
 	return GetInstance()
+}
+
+// Boot the application.
+func (app *Application) Boot() {
+	if app.booted {
+		return
+	}
+
+	for _, provider := range app.Container.GetProviders() {
+		provider.Boot()
+	}
+
+	app.booted = true
 }
 
 // Version returns the current version of the application.
