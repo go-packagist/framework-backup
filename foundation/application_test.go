@@ -75,6 +75,20 @@ func TestApplication_AppInstance(t *testing.T) {
 	assert.Equal(t, "ccc", Instance().MustMake("test").(*TestService).ReadContent())
 }
 
+func TestApplication_Boot(t *testing.T) {
+	app := NewApplication()
+
+	testProvider := NewTestProvider(app.Container)
+
+	app.Register(testProvider)
+
+	assert.False(t, testProvider.(*TestProvider).Booted)
+
+	app.Boot()
+
+	assert.True(t, testProvider.(*TestProvider).Booted)
+}
+
 func TestApplication_Instance(t *testing.T) {
 	app := NewApplication()
 
@@ -105,6 +119,7 @@ func TestApplication_Instance(t *testing.T) {
 
 type TestProvider struct {
 	container *container.Container
+	Booted    bool
 }
 
 var _ provider.Provider = (*TestProvider)(nil)
@@ -112,6 +127,7 @@ var _ provider.Provider = (*TestProvider)(nil)
 func NewTestProvider(c *container.Container) provider.Provider {
 	return &TestProvider{
 		container: c,
+		Booted:    false,
 	}
 }
 
@@ -126,7 +142,7 @@ func (p *TestProvider) Register() {
 }
 
 func (p *TestProvider) Boot() {
-
+	p.Booted = true
 }
 
 // TestService is a test service
